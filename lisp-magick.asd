@@ -34,19 +34,17 @@
 (defsystem lisp-magick
   :name "lisp-magick"
   :author "Hans Bulfone"
-  :version "0.71"
   :licence "BSD"
   :maintainer "Paul M. Rodriguez <pmr@ruricolist.com>"
   :description "ImageMagick binding"
-
+  :serial t
   :components
   ((:file "packages")
-   (:file "base"      :depends-on ("packages"))
-   (:file "quantum"   :depends-on ("packages" "base"))
-   (:file "types"     :depends-on ("packages" "base" "quantum"))
-   (:file "option"    :depends-on ("packages" "base" "types"))
-   (:file "enums"     :depends-on ("packages" "base" "option"))
-   (:file "magick"    :depends-on ("packages" "base" "quantum" "types" "enums"))
-   (:file "utils"     :depends-on ("packages" "magick")))
-
-  :depends-on ("cffi"))
+   (:file "base")
+   (:file "quantum")
+   (:file "types")
+   (:file "option")
+   (:file "enums")
+   (:file "magick")
+   (:file "utils"))
+  :depends-on (#:cffi #:alexandria))
