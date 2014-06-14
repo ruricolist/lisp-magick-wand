@@ -121,8 +121,15 @@
         `((new-image ,wand ,width ,height ,(car color))))))
 
 (defmethod %init-magick-wand (wand (init (eql :load)) args)
-  (destructuring-bind (filename) args
-    `((read-image ,wand ,filename))))
+  (destructuring-bind (filename &key jpeg-size) args
+    `(,@(when jpeg-size
+          (list
+           (alexandria:once-only (jpeg-size)
+             `(set-option ,wand "jpeg:size"
+                          (format nil "~dx~d"
+                                  (car ,jpeg-size)
+                                  (cdr ,jpeg-size))))))
+      (read-image ,wand (namestring (truename ,filename))))))
 
 (defmethod %init-magick-wand (wand (init (eql :from)) args)
   nil)
@@ -139,7 +146,13 @@ from disk:
 
 or with a newly created image with the given size and color:
 
-  (with-magick-wand (wand :create w h :components (0 0 0)) body...)"
+  (with-magick-wand (wand :create w h :components (0 0 0)) body...)
+
+When loading a JPEG image, you may want to specify the size for
+libjpeg (as a cons):
+
+  (with-magick-wand (wand :load filename :jpeg-size '(200 . 200) ...)
+"
 
   `(let ((,var ,(%create-magick-wand var init args)))
     (unwind-protect
