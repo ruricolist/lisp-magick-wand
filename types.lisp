@@ -30,32 +30,17 @@
 
 (defmagickfun "MagickRelinquishMemory" :pointer ((ptr :pointer)))
 
+(defmacro defmagicktype (name base-type)
+  `(cffi:define-foreign-type ,(type-name-to-class-name name) () ()
+     (:actual-type ,base-type)
+     (:simple-parser ,name)))
 
-;; CFFI has a new, incompatible, type translation api :((
-
-#-lisp-magick::cffi-new-type-api
-(progn
-  (defmacro defmagicktype (name base-type)
-    `(cffi:defctype ,name ,base-type))
-  (defmacro defmagicktrans (method-name (value-arg (type-arg type-name)
-						   &rest other-args)
-			    &body body)
-    `(defmethod ,method-name (,value-arg (,type-arg (eql ',type-name))
-			      ,@other-args)
-       ,@body)))
-
-#+lisp-magick::cffi-new-type-api
-(progn
-  (defmacro defmagicktype (name base-type)
-    `(cffi:define-foreign-type ,(type-name-to-class-name name) () ()
-       (:actual-type ,base-type)
-       (:simple-parser ,name)))
-  (defmacro defmagicktrans (method-name (value-arg (type-arg type-name)
-						   &rest other-args)
-			    &body body)
-    `(defmethod ,method-name (,value-arg (,type-arg ,(type-name-to-class-name type-name))
-			      ,@other-args)
-       ,@body)))
+(defmacro defmagicktrans (method-name (value-arg (type-arg type-name)
+                                       &rest other-args)
+                          &body body)
+  `(defmethod ,method-name (,value-arg (,type-arg ,(type-name-to-class-name type-name))
+                            ,@other-args)
+     ,@body))
 
 
 ;; size_t
@@ -144,9 +129,9 @@ but cffi doesn't support long long on your lisp implementation.")
   (let ((g (gensym)))
     `(let ((,g ,value))
       (prog1
-	  (cffi:foreign-string-to-lisp ,g)
-	(unless (cffi:null-pointer-p ,g)
-	  (magick-relinquish-memory ,g))))))
+          (cffi:foreign-string-to-lisp ,g)
+        (unless (cffi:null-pointer-p ,g)
+          (magick-relinquish-memory ,g))))))
 
 (defmethod %error-condition (value (type (eql 'magick-string/free)))
   `(null ,value))
