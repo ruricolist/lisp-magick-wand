@@ -35,9 +35,9 @@
   ((message :initarg :message :reader magick-wand-error-message)
    (type    :initarg :type    :reader magick-wand-error-type))
   (:report (lambda (c s)
-	     (format s "MagickWand Exception: ~a (~a)"
-		     (magick-wand-error-message c)
-		     (magick-wand-error-type c))))
+             (format s "MagickWand Exception: ~a (~a)"
+                     (magick-wand-error-message c)
+                     (magick-wand-error-type c))))
   (:documentation "Encapsulates errors reported by magick wand operations."))
 
 (defun signal-magick-wand-error (wand)
@@ -140,14 +140,14 @@
 (defmagickfun "MagickSetFormat"             :boolean ((wand magick-wand) (format magick-string))            :check-error wand)
 (defmagickfun "MagickSetInterlaceScheme"    :boolean ((wand magick-wand) (interlace-scheme interlace-type)) :check-error wand)
 (defmagickfun "MagickSetOption"             :boolean ((wand magick-wand) (key magick-string)
-						      (value magick-string))                                :check-error wand)
+                                                      (value magick-string))                                :check-error wand)
 (defmagickfun "MagickSetPage"               :boolean ((wand magick-wand) (width :ulong) (height :ulong)
-						      (x :long) (y :long))                                  :check-error wand)
+                                                      (x :long) (y :long))                                  :check-error wand)
 (defmagickfun "MagickSetPassphrase"         :boolean ((wand magick-wand) (passphrase magick-string))        :check-error wand)
 (defmagickfun "MagickSetResolution"         :boolean ((wand magick-wand) (x-resolution magick-double)
-						      (y-resolution magick-double))                         :check-error wand)
+                                                      (y-resolution magick-double))                         :check-error wand)
 (defmagickfun "MagickSetSamplingFactors"    :boolean ((wand magick-wand) (num (:dynarray-length :ulong factors))
-						      (factors (:dynarray magick-double)))                  :check-error wand)
+                                                      (factors (:dynarray magick-double)))                  :check-error wand)
 (defmagickfun "MagickSetSize"               :boolean ((wand magick-wand) (columns :ulong) (rows :ulong))    :check-error wand)
 (defmagickfun "MagickSetType"               :boolean ((wand magick-wand) (type image-type))                 :check-error wand)
 
@@ -171,17 +171,24 @@
 (defmagickfun "MagickGetImageBackgroundColor" :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
 (defmagickfun "MagickGetImageBorderColor"     :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
 (defmagickfun "MagickGetImageColormapColor"   :boolean           ((wand magick-wand) (index :ulong)
-								  (color pixel-wand))                      :check-error wand)
+                                                                  (color pixel-wand))                      :check-error wand)
 (defmagickfun "MagickGetImageMatte"           :boolean           ((wand magick-wand)))
 (defmagickfun "MagickGetImageMatteColor"      :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
 (defmagickfun "MagickGetImagePage"            :boolean           ((wand magick-wand)
-								  (width (:out :ulong)) (height (:out :ulong))
-								  (x (:out :long)) (y (:out :long)))       :check-error wand)
+                                                                  (width (:out :ulong)) (height (:out :ulong))
+                                                                  (x (:out :long)) (y (:out :long)))       :check-error wand)
 (defmagickfun "MagickGetImageResolution"      :boolean           ((wand magick-wand) (x (:out :double))
-								  (y (:out :double)))                      :check-error wand)
+                                                                  (y (:out :double)))                      :check-error wand)
 (defmagickfun "MagickGetImageWidth"           :ulong             ((wand magick-wand)))
 (defmagickfun "MagickGetImageHeight"          :ulong             ((wand magick-wand)))
 
+(defmagickfun "MagickSetImageCompressionQuality"
+  :boolean ((wand magick-wand) (quality :ulong))
+  :check-error wand)
+
+(defmagickfun "MagickStripImage"
+  :boolean ((wand magick-wand))
+  :check-error wand)
 
 ;; Create/Read/write/remove images
 
@@ -680,28 +687,28 @@
 ;; Draw operations
 
 (defmagickfun "DrawAnnotation"     :void ((dwand drawing-wand) (x magick-double) (y magick-double)
-					  (text magick-string)))
+                                          (text magick-string)))
 (defmagickfun "DrawArc"            :void ((dwand drawing-wand) (sx magick-double) (sy magick-double)
-					  (ex magick-double) (ey magick-double)
-					  (sd magick-double) (ed magick-double)))
+                                          (ex magick-double) (ey magick-double)
+                                          (sd magick-double) (ed magick-double)))
 (defmagickfun "DrawCircle"         :void ((dwand drawing-wand) (ox magick-double) (oy magick-double)
-					  (px magick-double) (py magick-double)))
+                                          (px magick-double) (py magick-double)))
 (defmagickfun "DrawColor"          :void ((dwand drawing-wand) (x magick-double) (y magick-double)
-					  (method paint-method)))
+                                          (method paint-method)))
 (defmagickfun "DrawComment"        :void ((dwand drawing-wand) (comment magick-string)))
 (defmagickfun "DrawEllipse"        :void ((dwand drawing-wand) (ox magick-double) (oy magick-double)
-					  (rx magick-double) (ry magick-double)
-					  (start magick-double) (end magick-double)))
+                                          (rx magick-double) (ry magick-double)
+                                          (start magick-double) (end magick-double)))
 (defmagickfun "DrawLine"           :void ((dwand drawing-wand) (sx magick-double) (sy magick-double)
-					  (ex magick-double) (ey magick-double)))
+                                          (ex magick-double) (ey magick-double)))
 (defmagickfun "DrawMatte"          :void ((dwand drawing-wand) (x magick-double) (y magick-double)
-					  (method paint-method)))
+                                          (method paint-method)))
 (defmagickfun "DrawPoint"          :void ((dwand drawing-wand) (x magick-double) (y magick-double)))
 (defmagickfun "DrawRectangle"      :void ((dwand drawing-wand) (x1 magick-double) (y1 magick-double)
-					  (x2 magick-double) (y2 magick-double)))
+                                          (x2 magick-double) (y2 magick-double)))
 (defmagickfun "DrawRoundRectangle" :void ((dwand drawing-wand) (x1 magick-double) (y1 magick-double)
-					  (x2 magick-double) (y2 magick-double)
-					  (rx magick-double) (ry magick-double)))
+                                          (x2 magick-double) (y2 magick-double)
+                                          (rx magick-double) (ry magick-double)))
 
 
 ;; Path operations
