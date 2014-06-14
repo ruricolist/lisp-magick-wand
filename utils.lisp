@@ -44,19 +44,19 @@
     (ecase type
       (:double
        `((pixel-set-red ,wand ,r)
-	 (pixel-set-green ,wand ,g)
-	 (pixel-set-blue ,wand ,b)
-	 ,@(when a `((pixel-set-alpha ,wand ,a)))))
+         (pixel-set-green ,wand ,g)
+         (pixel-set-blue ,wand ,b)
+         ,@(when a `((pixel-set-alpha ,wand ,a)))))
       (:quantum
        `((pixel-set-red-quantum ,wand ,r)
-	 (pixel-set-green-quantum ,wand ,g)
-	 (pixel-set-blue-quantum ,wand ,b)
-	 ,@(when a `((pixel-set-alpha-quantum ,wand ,a)))))
+         (pixel-set-green-quantum ,wand ,g)
+         (pixel-set-blue-quantum ,wand ,b)
+         ,@(when a `((pixel-set-alpha-quantum ,wand ,a)))))
       (:byte
        `((pixel-set-red-quantum ,wand (byte->quantum ,r))
-	 (pixel-set-green-quantum ,wand (byte->quantum ,g))
-	 (pixel-set-blue-quantum ,wand (byte->quantum ,b))
-	 ,@(when a `((pixel-set-alpha-quantum ,wand (byte->quantum ,a)))))))))
+         (pixel-set-green-quantum ,wand (byte->quantum ,g))
+         (pixel-set-blue-quantum ,wand (byte->quantum ,b))
+         ,@(when a `((pixel-set-alpha-quantum ,wand (byte->quantum ,a)))))))))
 
 (defmethod %init-pixel-wand (wand (type (eql :comp)) args)
   (%init-pixel-wand wand :components args))
@@ -67,29 +67,29 @@
       (error "invalid format ~a" format))
     (let ((g (gensym)))
       `((let ((,g ,v))
-	  ,@ (ecase type
-	       (:double
-		`((pixel-set-red ,wand (svref ,g 0))
-		  (pixel-set-green ,wand (svref ,g 1))
-		  (pixel-set-blue ,wand (svref ,g 2))
-		  ,@(when (eql format :rgba) `((pixel-set-alpha ,wand (svref ,g 3))))))
-	       (:quantum
-		`((pixel-set-red-quantum ,wand (svref ,g 0))
-		  (pixel-set-green-quantum ,wand (svref ,g 1))
-		  (pixel-set-blue-quantum ,wand (svref ,g 2))
-		  ,@(when (eql format :rgba) `((pixel-set-alpha-quantum ,wand (svref ,g 3))))))
-	       (:byte
-		`((pixel-set-red-quantum ,wand (byte->quantum (svref ,g 0)))
-		  (pixel-set-green-quantum ,wand (byte->quantum (svref ,g 1)))
-		  (pixel-set-blue-quantum ,wand (byte->quantum (svref ,g 2)))
-		  ,@(when (eql format :rgba) `((pixel-set-alpha-quantum ,wand (byte->quantum (svref ,g 3)))))))))))))
+          ,@ (ecase type
+               (:double
+                `((pixel-set-red ,wand (svref ,g 0))
+                  (pixel-set-green ,wand (svref ,g 1))
+                  (pixel-set-blue ,wand (svref ,g 2))
+                  ,@(when (eql format :rgba) `((pixel-set-alpha ,wand (svref ,g 3))))))
+               (:quantum
+                `((pixel-set-red-quantum ,wand (svref ,g 0))
+                  (pixel-set-green-quantum ,wand (svref ,g 1))
+                  (pixel-set-blue-quantum ,wand (svref ,g 2))
+                  ,@(when (eql format :rgba) `((pixel-set-alpha-quantum ,wand (svref ,g 3))))))
+               (:byte
+                `((pixel-set-red-quantum ,wand (byte->quantum (svref ,g 0)))
+                  (pixel-set-green-quantum ,wand (byte->quantum (svref ,g 1)))
+                  (pixel-set-blue-quantum ,wand (byte->quantum (svref ,g 2)))
+                  ,@(when (eql format :rgba) `((pixel-set-alpha-quantum ,wand (byte->quantum (svref ,g 3)))))))))))))
 
 (defmacro with-pixel-wand ((var &optional type &rest args) &body body)
   `(let ((,var (new-pixel-wand)))
     (unwind-protect
-	 (progn
-	   ,@(when type (%init-pixel-wand var type args))
-	   ,@body)
+         (progn
+           ,@(when type (%init-pixel-wand var type args))
+           ,@body)
       (destroy-pixel-wand ,var))))
 
 
@@ -99,7 +99,7 @@
 (defmacro with-drawing-wand ((var) &body body)
   `(let ((,var (new-drawing-wand)))
     (unwind-protect
-	 (progn ,@body)
+         (progn ,@body)
       (destroy-drawing-wand ,var))))
 
 
@@ -115,14 +115,14 @@
 (defmethod %init-magick-wand (wand (init (eql :create)) args)
   (destructuring-bind (width height &rest color) args
     (if (or (null color) (keywordp (car color)))
-	(let ((pw (gensym)))
-	  `((with-pixel-wand (,pw ,@color)
-	      (magick-new-image ,wand ,width ,height ,pw))))
-	`((magick-new-image ,wand ,width ,height ,(car color))))))
+        (let ((pw (gensym)))
+          `((with-pixel-wand (,pw ,@color)
+              (new-image ,wand ,width ,height ,pw))))
+        `((new-image ,wand ,width ,height ,(car color))))))
 
 (defmethod %init-magick-wand (wand (init (eql :load)) args)
   (destructuring-bind (filename) args
-    `((magick-read-image ,wand ,filename))))
+    `((read-image ,wand ,filename))))
 
 (defmethod %init-magick-wand (wand (init (eql :from)) args)
   nil)
@@ -143,11 +143,11 @@ or with a newly created image with the given size and color:
 
   `(let ((,var ,(%create-magick-wand var init args)))
     (unwind-protect
-	 (progn
-	   ,@(when init (%init-magick-wand var init args))
-	   ,@body)
+         (progn
+           ,@(when init (%init-magick-wand var init args))
+           ,@body)
       (when ,var
-	(destroy-magick-wand ,var)))))
+        (destroy-magick-wand ,var)))))
 
 (defmacro give-wand (var)
   `(prog1 ,var (setf ,var nil)))
@@ -164,21 +164,21 @@ or with a newly created image with the given size and color:
 (defmacro with-pixel-data ((var wand) &body body)
   (let ((g-wand (gensym)) (g-pd (gensym)) (g-w (gensym)) (g-h (gensym)))
     `(let* ((,g-wand ,wand)
-	    (,g-w (magick-get-image-width ,g-wand))
-	    (,g-h (magick-get-image-height ,g-wand))
-	    (,g-pd (cffi:foreign-alloc :uchar :count (* ,g-w ,g-h 4))))
+            (,g-w (get-image-width ,g-wand))
+            (,g-h (get-image-height ,g-wand))
+            (,g-pd (cffi:foreign-alloc :uchar :count (* ,g-w ,g-h 4))))
       (unwind-protect
-	   (progn
-	     (magick-get-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)
-	     (prog1
-		 (let ((,var (make-instance 'pixel-data :data ,g-pd :width ,g-w :height ,g-h)))
-		   ,@body)
-	       (magick-set-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)))
-	(cffi:foreign-free ,g-pd)))))
+           (progn
+             (get-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)
+             (prog1
+                 (let ((,var (make-instance 'pixel-data :data ,g-pd :width ,g-w :height ,g-h)))
+                   ,@body)
+               (set-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)))
+        (cffi:foreign-free ,g-pd)))))
 
 (defun pixel (pd x y)
   (let ((data (pd-data pd))
-	(i (+ (* (pd-width pd) y 4) (* x 4))))
+        (i (+ (* (pd-width pd) y 4) (* x 4))))
     (vector
      (cffi:mem-ref data :uchar i)
      (cffi:mem-ref data :uchar (+ i 1))
@@ -187,15 +187,15 @@ or with a newly created image with the given size and color:
 
 (defun (setf pixel) (color pd x y)
   (let ((data (pd-data pd))
-	(i (+ (* (pd-width pd) y 4) (* x 4))))
+        (i (+ (* (pd-width pd) y 4) (* x 4))))
     (setf (cffi:mem-ref data :uchar i)       (svref color 0)
-	  (cffi:mem-ref data :uchar (+ i 1)) (svref color 1)
-	  (cffi:mem-ref data :uchar (+ i 2)) (svref color 2)
-	  (cffi:mem-ref data :uchar (+ i 3)) (svref color 3))))
+          (cffi:mem-ref data :uchar (+ i 1)) (svref color 1)
+          (cffi:mem-ref data :uchar (+ i 2)) (svref color 2)
+          (cffi:mem-ref data :uchar (+ i 3)) (svref color 3))))
 
 (defun get-pixel (pd x y)
   (let ((data (pd-data pd))
-	(i (+ (* (pd-width pd) y 4) (* x 4))))
+        (i (+ (* (pd-width pd) y 4) (* x 4))))
     (values
      (cffi:mem-ref data :uchar i)
      (cffi:mem-ref data :uchar (+ i 1))
@@ -204,8 +204,8 @@ or with a newly created image with the given size and color:
 
 (defun set-pixel (pd x y r g b a)
   (let ((data (pd-data pd))
-	(i (+ (* (pd-width pd) y 4) (* x 4))))
+        (i (+ (* (pd-width pd) y 4) (* x 4))))
     (setf (cffi:mem-ref data :uchar i)       r
-	  (cffi:mem-ref data :uchar (+ i 1)) g
-	  (cffi:mem-ref data :uchar (+ i 2)) b
-	  (cffi:mem-ref data :uchar (+ i 3)) a)))
+          (cffi:mem-ref data :uchar (+ i 1)) g
+          (cffi:mem-ref data :uchar (+ i 2)) b
+          (cffi:mem-ref data :uchar (+ i 3)) a)))

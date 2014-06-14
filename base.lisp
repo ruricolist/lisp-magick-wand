@@ -38,6 +38,9 @@
   (:documentation "perform special return value handling for defmagickfun"))
 
 (defun %magick-lisp-name (c-name)
+  ;; Trim the Magick- prefix.
+  (when (= (mismatch "Magick" c-name) 6)
+    (setf c-name (subseq c-name 6)))
   (intern
    (with-output-to-string (s)
      (loop for lcase = nil then case
@@ -187,7 +190,7 @@
                                ((eql seq-type 'list)
                                 `(loop for ,g-i from 0 below (cffi:mem-ref ,g-len ',len-type)
                                        collecting (cffi:mem-aref ,name ',type ,g-i)
-                                       finally (magick-relinquish-memory ,name)))
+                                       finally (relinquish-memory ,name)))
                                ((or (eql seq-type 'vector)
                                     (and (listp seq-type)
                                          (eql (first seq-type) 'vector)))
@@ -198,7 +201,7 @@
                                           (,g-seq (make-array ,g-l :element-type ',eltype)))
                                     (dotimes (,g-i ,g-l)
                                       (setf (aref ,g-seq ,g-i) (cffi:mem-aref ,name ',type ,g-i)))
-                                    (magick-relinquish-memory ,name)
+                                    (relinquish-memory ,name)
                                     ,g-seq)))
                                (t (error "unsupported sequence type: ~s" seq-type))))))
              ,code)))
@@ -225,7 +228,7 @@
                                         `(until (cffi:null-pointer-p (cffi:mem-aref ,name :pointer ,g-i))))
                                 collecting (cffi:mem-aref ,name ',type ,g-i)
                                   ,@(if free-array-p
-                                        `(finally (magick-relinquish-memory ,name)))))))
+                                        `(finally (relinquish-memory ,name)))))))
               ,code)))
       (%set-return-type :pointer)
       (setf (%get-state :ret-array :err-val) err-val))))

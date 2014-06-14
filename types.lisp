@@ -119,7 +119,7 @@ but cffi doesn't support long long on your lisp implementation.")
   (prog1
       (cffi:foreign-string-to-lisp value)
     (unless (cffi:null-pointer-p value)
-      (magick-relinquish-memory value))))
+      (relinquish-memory value))))
 (defmagicktrans cffi:translate-to-foreign (value (type magick-string/free))
   (values (cffi:foreign-string-alloc value) t))
 (defmagicktrans cffi:free-translated-object (value (type magick-string/free) free-p)
@@ -131,7 +131,7 @@ but cffi doesn't support long long on your lisp implementation.")
       (prog1
           (cffi:foreign-string-to-lisp ,g)
         (unless (cffi:null-pointer-p ,g)
-          (magick-relinquish-memory ,g))))))
+          (relinquish-memory ,g))))))
 
 (defmethod %error-condition (value (type (eql 'magick-string/free)))
   `(null ,value))
