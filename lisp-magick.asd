@@ -36,7 +36,7 @@
   :author "Hans Bulfone"
   :version "0.71"
   :licence "BSD"
-  :maintainer "Hans Bulfone <jsb@nil.at>"
+  :maintainer "Paul M. Rodriguez <pmr@ruricolist.com>"
   :description "ImageMagick binding"
 
   :components
