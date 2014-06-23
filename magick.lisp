@@ -41,7 +41,7 @@
   (:documentation "Encapsulates errors reported by magick wand operations."))
 
 (defun signal-magick-wand-error (wand)
-  (multiple-value-bind (msg type) (magick-get-exception wand)
+  (multiple-value-bind (msg type) (get-exception wand)
     (error 'magick-wand-error :message msg :type type)))
 
 (defun signal-pixel-wand-error (wand)
