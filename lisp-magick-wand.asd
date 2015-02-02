@@ -31,8 +31,8 @@
   (:use :cl :asdf))
 (in-package :lisp-magick-system)
 
-(defsystem lisp-magick
-  :name "lisp-magick"
+(defsystem lisp-magick-wand
+  :name "lisp-magick-wand"
   :author "Hans Bulfone"
   :licence "BSD"
   :maintainer "Paul M. Rodriguez <pmr@ruricolist.com>"

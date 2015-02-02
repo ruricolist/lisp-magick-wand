@@ -26,7 +26,7 @@
 ;;;; OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ;;;; ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(in-package :lisp-magick)
+(in-package :lisp-magick-wand)
 
 (defmagickfun "MagickRelinquishMemory" :pointer ((ptr :pointer)))
 
@@ -65,36 +65,36 @@
 
 (declaim (inline byte->quantum quantum->byte))
 
-#+lisp-magick:quantum-8
+#+lisp-magick-wand:quantum-8
 (progn
   (defmagicktype quantum :uint8)
   (defun byte->quantum (b) b)
   (defun quantum->byte (b) b))
 
-#+lisp-magick:quantum-16
+#+lisp-magick-wand:quantum-16
 (progn
   (defmagicktype quantum :uint16)
   (defun byte->quantum (b) (* b 257))
   (defun quantum->byte (b) (values (truncate b 257))))
 
-#+lisp-magick:quantum-32
+#+lisp-magick-wand:quantum-32
 (progn
   (defmagicktype quantum :uint32)
   (defun byte->quantum (b) (* b 16843009))
   (defun quantum->byte (b) (values (truncate b 16843009))))
 
-#+(and lisp-magick:quantum-64 cffi-features:no-long-long)
+#+(and lisp-magick-wand:quantum-64 cffi-features:no-long-long)
 (error "your version of imagemagick uses a quantum size of 64bit,
 but cffi doesn't support long long on your lisp implementation.")
 
-#+(and lisp-magick:quantum-64 (not cffi-features:no-long-long))
+#+(and lisp-magick-wand:quantum-64 (not cffi-features:no-long-long))
 (progn
   (defmagicktype quantum :uint64)
   (defun byte->quantum (b) (* b 72340172838076673))
   (defun quantum->byte (b) (values (truncate b 72340172838076673))))
 
-#-(or lisp-magick:quantum-8 lisp-magick:quantum-16
-      lisp-magick:quantum-32 lisp-magick:quantum-64)
+#-(or lisp-magick-wand:quantum-8 lisp-magick-wand:quantum-16
+      lisp-magick-wand:quantum-32 lisp-magick-wand:quantum-64)
 (error "quantum size feature not defined")
 
 (defmagicktrans cffi:expand-to-foreign (value (type quantum))     value)
