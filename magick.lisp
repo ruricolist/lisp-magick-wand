@@ -181,6 +181,8 @@
                                                                   (y (:out :double)))                      :check-error wand)
 (defmagickfun "MagickGetImageWidth"           :ulong             ((wand magick-wand)))
 (defmagickfun "MagickGetImageHeight"          :ulong             ((wand magick-wand)))
+(defmagickfun "MagickGetImageAlphaChannel"    :boolean           ((wand magick-wand)))
+(defmagickfun "MagickGetImageOrientation"     orientation-type   ((wand magick-wand)))
 
 (defmagickfun "MagickSetImageCompressionQuality"
   :boolean ((wand magick-wand) (quality :ulong))
@@ -256,8 +258,27 @@
 (defmagickfun "MagickAnimateImages" :boolean
   ((wand magick-wand) (server-name magick-string))
   :check-error wand)
+(defmagickfun "MagickAutoGammaImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickAutoLevelImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickAutoOrientImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickAutoThresholdImage" :boolean
+  ((wand magick-wand) (method auto-threshold-method))
+  :check-error wand)
+(defmagickfun "MagickBilateralBlurImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double)
+   (intensity-sigma magick-double) (spatial-sigma magick-double))
+  :check-error wand)
 (defmagickfun "MagickBlackThresholdImage" :boolean
   ((wand magick-wand) (threshold pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickBlueShiftImage" :boolean
+  ((wand magick-wand) (factor magick-double))
   :check-error wand)
 (defmagickfun "MagickBlurImage" :boolean
   ((wand magick-wand) (radius magick-double) (sigma magick-double))
@@ -268,11 +289,25 @@
 (defmagickfun "MagickBorderImage" :boolean
   ((wand magick-wand) (color pixel-wand) (width :ulong) (height :ulong))
   :check-error wand)
+(defmagickfun "MagickBrightnessContrastImage" :boolean
+  ((wand magick-wand) (brightness magick-double) (contrast magick-double))
+  :check-error wand)
+(defmagickfun "MagickCannyEdgeImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double)
+   (lower-percent magick-double) (upper-percent magick-double))
+  :check-error wand)
 (defmagickfun "MagickCharcoalImage" :boolean
   ((wand magick-wand) (radius magick-double) (sigma magick-double))
   :check-error wand)
 (defmagickfun "MagickChopImage" :boolean
   ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
+  :check-error wand)
+(defmagickfun "MagickCLAHEImage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong)
+   (number-bins magick-double) (clip-limit magick-double))
+  :check-error wand)
+(defmagickfun "MagickClampImage" :boolean
+  ((wand magick-wand))
   :check-error wand)
 ;; deprecated
 (defmagickfun "MagickClipImage" :boolean
@@ -289,6 +324,9 @@
   :check-error wand)
 (defmagickfun "MagickColorizeImage" :boolean
   ((wand magick-wand) (colorize pixel-wand) (opacity pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickColorThresholdImage" :boolean
+  ((wand magick-wand) (start-color pixel-wand) (stop-color pixel-wand))
   :check-error wand)
 (defmagickfun "MagickCommentImage" :boolean
   ((wand magick-wand) (comment magick-string))
@@ -315,11 +353,26 @@
    (order (:dynarray-length :ulong kernel :expr (isqrt :l)))
    (kernel (:dynarray magick-double)))
   :check-error wand)
+(defmagickfun "MagickCommentImage" :boolean
+  ((wand magick-wand) (comment magick-string))
+  :check-error wand)
+(defmagickfun "MagickContrastImage" :boolean
+  ((wand magick-wand) (sharpen :boolean))
+  :check-error wand)
+(defmagickfun "MagickContrastStretchImage" :boolean
+  ((wand magick-wand) (black-point magick-double) (white-point magick-double))
+  :check-error wand)
 (defmagickfun "MagickCropImage" :boolean
   ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
   :check-error wand)
 (defmagickfun "MagickCycleColormapImage" :boolean
   ((wand magick-wand) (displace :long))
+  :check-error wand)
+(defmagickfun "MagickDecipherImage" :boolean
+  ((wand magick-wand) (passphrase magick-string))
+  :check-error wand)
+(defmagickfun "MagickDeskewImage" :boolean
+  ((wand magick-wand) (threshold pixel-wand))
   :check-error wand)
 (defmagickfun "MagickDespeckleImage" :boolean
   ((wand magick-wand))
@@ -345,6 +398,9 @@
 (defmagickfun "MagickEmbossImage" :boolean
   ((wand magick-wand) (radius magick-double) (sigma magick-double))
   :check-error wand)
+(defmagickfun "MagickEncipherImage" :boolean
+  ((wand magick-wand) (passphrase magick-string))
+  :check-error wand)
 (defmagickfun "MagickEnhanceImage" :boolean
   ((wand magick-wand))
   :check-error wand)
@@ -358,11 +414,21 @@
   ((wand magick-wand) (channel channel-type)
    (op magick-evaluate-operator) (constant magick-double))
   :check-error wand)
+(defmagickfun "MagickExtentImage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
+  :check-error wand)
 (defmagickfun "MagickFlipImage" :boolean
   ((wand magick-wand))
   :check-error wand)
+(defmagickfun "MagickFloodfillPaintImage" :boolean
+  ((wand magick-wand) (fill pixel-wand) (fuzz magick-double)
+   (border-color pixel-wand) (x :long) (y :long) (invert :boolean))
+  :check-error wand)
 (defmagickfun "MagickFlopImage" :boolean
   ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickForwardFourierTransformImage" :boolean
+  ((wand magick-wand) (magnitude :boolean))
   :check-error wand)
 (defmagickfun "MagickFrameImage" :boolean
   ((wand magick-wand) (matte-color pixel-wand)
@@ -380,8 +446,26 @@
 (defmagickfun "MagickGaussianBlurImageChannel" :boolean
   ((wand magick-wand) (channel channel-type) (radius magick-double) (sigma magick-double))
   :check-error wand)
+(defmagickfun "MagickHaldClutImage" :boolean
+  ((wand magick-wand) (hald-wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickHoughLineImage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong) (threshold :long))
+  :check-error wand)
 (defmagickfun "MagickImplodeImage" :boolean
   ((wand magick-wand) (amount magick-double))
+  :check-error wand)
+(defmagickfun "MagickInterpolativeResizeImage" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong) (method pixel-interpolate-method))
+  :check-error wand)
+(defmagickfun "MagickInverseFourierTransformImage" :boolean
+  ((magnitude-wand magick-wand) (phase-wand magick-wand) (magnitude :boolean))
+  :check-error magnitude-wand)
+(defmagickfun "MagickKmeansImage" :boolean
+  ((wand magick-wand) (number-colors :ulong) (max-iterations :ulong) (tolerance magick-double))
+  :check-error wand)
+(defmagickfun "MagickKuwaharaImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double))
   :check-error wand)
 (defmagickfun "MagickLabelImage" :boolean
   ((wand magick-wand) (label magick-string))
@@ -394,6 +478,23 @@
   ((wand magick-wand) (channel channel-type)
    (black-point magick-double) (gamma magick-double)
    (white-point magick-double))
+  :check-error wand)
+(defmagickfun "MagickLevelImageColors" :boolean
+  ((wand magick-wand) (black-color pixel-wand) (white-color pixel-wand) (invert :boolean))
+  :check-error wand)
+(defmagickfun "MagickLevelizeImage" :boolean
+  ((wand magick-wand) (black-point magick-double)
+   (white-point magick-double) (gamma magick-double))
+  :check-error wand)
+(defmagickfun "MagickLinearStretchImage" :boolean
+  ((wand magick-wand) (black-point magick-double) (white-point magick-double))
+  :check-error wand)
+(defmagickfun "MagickLiquidRescaleImage" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong)
+   (delta-x magick-double) (rigidity magick-double))
+  :check-error wand)
+(defmagickfun "MagickLocalContrastImage" :boolean
+  ((wand magick-wand) (radius magick-double) (strength magick-double))
   :check-error wand)
 ;; deprecated
 (defmagickfun "MagickMagnifyImage" :boolean
@@ -411,6 +512,9 @@
 ;; deprecated
 (defmagickfun "MagickMedianFilterImage" :boolean
   ((wand magick-wand) (radius magick-double))
+  :check-error wand)
+(defmagickfun "MagickMeanShiftImage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong) (color-distance magick-double))
   :check-error wand)
 (defmagickfun "MagickMinifyImage" :boolean
   ((wand magick-wand))
@@ -436,6 +540,16 @@
 (defmagickfun "MagickOilPaintImage" :boolean
   ((wand magick-wand) (radius magick-double))
   :check-error wand)
+(defmagickfun "MagickOpaquePaintImage" :boolean
+  ((wand magick-wand) (target pixel-wand) (fill pixel-wand) (fuzz magick-double) (invert :boolean))
+  :check-error wand)
+(defmagickfun "MagickOptimizeImageTransparency" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickOrderedDitherImage" :boolean
+  ((wand magick-wand) (threshold-map magick-string))
+  :check-error wand)
+;; deprecated
 (defmagickfun "MagickPaintOpaqueImage" :boolean
   ((wand magick-wand) (target pixel-wand) (fill pixel-wand) (fuzz magick-double))
   :check-error wand)
@@ -447,6 +561,24 @@
 ;; deprecated
 (defmagickfun "MagickPaintTransparentImage" :boolean
   ((wand magick-wand) (target pixel-wand) (opacity quantum) (fuzz magick-double))
+  :check-error wand)
+(defmagickfun "MagickPingImage" :boolean
+  ((wand magick-wand) (filename magick-string))
+  :check-error wand)
+(defmagickfun "MagickPingImageBlob" :boolean
+  ((wand magick-wand)
+   (blob (:dynarray :uint8))
+   (length (:dynarray-length size-t blob)))
+  :check-error wand)
+(defmagickfun "MagickPolaroidImage" :boolean
+  ((wand magick-wand) (drawing-wand drawing-wand) (caption magick-string)
+   (angle magick-double) (method pixel-interpolate-method))
+  :check-error wand)
+(defmagickfun "MagickPolynomialImage" :boolean
+  ((wand magick-wand) (num (:dynarray-length :ulong terms)) (terms (:dynarray magick-double)))
+  :check-error wand)
+(defmagickfun "MagickPreviousImage" :boolean
+  ((wand magick-wand))
   :check-error wand)
 (defmagickfun "MagickPosterizeImage" :boolean
   ((wand magick-wand) (levels :ulong) (dither :boolean))
@@ -476,12 +608,26 @@
   ((wand magick-wand) (width :ulong) (height :ulong)
    (x :long) (y :long) (raise :boolean))
   :check-error wand)
+(defmagickfun "MagickRandomThresholdImage" :boolean
+  ((wand magick-wand) (low magick-double) (high magick-double))
+  :check-error wand)
+(defmagickfun "MagickRangeThresholdImage" :boolean
+  ((wand magick-wand) (low-black magick-double) (low-white magick-double)
+   (high-black magick-double) (high-white magick-double))
+  :check-error wand)
+;; deprecated
 (defmagickfun "MagickReduceNoiseImage" :boolean
   ((wand magick-wand) (radius magick-double))
+  :check-error wand)
+(defmagickfun "MagickRemapImage" :boolean
+  ((wand magick-wand) (remap-wand magick-wand) (method dither-method))
   :check-error wand)
 (defmagickfun "MagickResampleImage" :boolean
   ((wand magick-wand) (x-resolution magick-double) (y-resolution magick-double)
    (filter filter-type) (blur magick-double))
+  :check-error wand)
+(defmagickfun "MagickResetImagePage" :boolean
+  ((wand magick-wand) (page magick-string))
   :check-error wand)
 (defmagickfun "MagickResizeImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong)
@@ -493,11 +639,24 @@
 (defmagickfun "MagickRotateImage" :boolean
   ((wand magick-wand) (background pixel-wand) (degrees magick-double))
   :check-error wand)
+(defmagickfun "MagickRotationalBlurImage" :boolean
+  ((wand magick-wand) (angle magick-double))
+  :check-error wand)
 (defmagickfun "MagickSampleImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong))
   :check-error wand)
 (defmagickfun "MagickScaleImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong))
+  :check-error wand)
+(defmagickfun "MagickSegmentImage" :boolean
+  ((wand magick-wand) (colorspace colorspace-type) (verbose :boolean)
+   (cluster-threshold magick-double) (smooth-threshold magick-double))
+  :check-error wand)
+(defmagickfun "MagickSelectiveBlurImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double) (threshold magick-double))
+  :check-error wand)
+(defmagickfun "MagickSeparateImage" :boolean
+  ((wand magick-wand) (channel channel-type))
   :check-error wand)
 ;; deprecated
 (defmagickfun "MagickSeparateImageChannel" :boolean
@@ -506,15 +665,101 @@
 (defmagickfun "MagickSepiaToneImage" :boolean
   ((wand magick-wand) (threshold magick-double))
   :check-error wand)
+(defmagickfun "MagickShadeImage" :boolean
+  ((wand magick-wand) (gray :boolean) (asimuth magick-double) (elevation magick-double))
+  :check-error wand)
+(defmagickfun "MagickShadowImage" :boolean
+  ((wand magick-wand) (alpha magick-double) (sigma magick-double) (x :long) (y :long))
+  :check-error wand)
+(defmagickfun "MagickSharpenImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double))
+  :check-error wand)
+(defmagickfun "MagickShaveImage" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong))
+  :check-error wand)
+(defmagickfun "MagickShearImage" :boolean
+  ((wand magick-wand) (background pixel-wand) (x-shear magick-double) (y-shear magick-double))
+  :check-error wand)
+(defmagickfun "MagickSigmoidalContrastImage" :boolean
+  ((wand magick-wand) (sharpen :boolean) (alpha magick-double) (beta magick-double))
+  :check-error wand)
+(defmagickfun "MagickSketchImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double) (angle magick-double))
+  :check-error wand)
+(defmagickfun "MagickSolarizeImage" :boolean
+  ((wand magick-wand) (threshold magick-double))
+  :check-error wand)
+(defmagickfun "MagickSparseColorImage" :boolean
+  ((wand magick-wand) (method sparse-color-method)
+   (num (:dynarray-length :ulong args)) (args (:dynarray magick-double)))
+  :check-error wand)
+(defmagickfun "MagickSpliceImage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
+  :check-error wand)
+(defmagickfun "MagickSpreadImage" :boolean
+  ((wand magick-wand) (method pixel-interpolate-method) (radius magick-double))
+  :check-error wand)
+(defmagickfun "MagickStatisticImage" :boolean
+  ((wand magick-wand) (type statistic-type) (width :ulong) (height :ulong))
+  :check-error wand)
+(defmagickfun "MagickStripImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickSwirlImage" :boolean
+  ((wand magick-wand) (degrees magick-double) (method pixel-interpolate-method))
+  :check-error wand)
 (defmagickfun "MagickThresholdImage" :boolean
   ((wand magick-wand) (threshold magick-double))
   :check-error wand)
 (defmagickfun "MagickThresholdImageChannel" :boolean
   ((wand magick-wand) (channel channel-type) (threshold magick-double))
   :check-error wand)
+(defmagickfun "MagickThumbnailImage" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong))
+  :check-error wand)
+(defmagickfun "MagickTintImage" :boolean
+  ((wand magick-wand) (tint pixel-wand) (blend pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickTransformImageColorspace" :boolean
+  ((wand magick-wand) (colorspace colorspace-type))
+  :check-error wand)
+(defmagickfun "MagickTransparentPaintImage" :boolean
+  ((wand magick-wand) (target pixel-wand) (alpha magick-double)
+   (fuzz magick-double) (invert :boolean))
+  :check-error wand)
+(defmagickfun "MagickTransposeImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickTransverseImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickTrimImage" :boolean
+  ((wand magick-wand) (fuzz magick-double))
+  :check-error wand)
+(defmagickfun "MagickUniqueImageColors" :boolean
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickUnsharpMaskImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double)
+   (gain magick-double) (threshold magick-double))
+  :check-error wand)
+(defmagickfun "MagickVignetteImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double) (x :long) (y :long))
+  :check-error wand)
+(defmagickfun "MagickWaveImage" :boolean
+  ((wand magick-wand) (amplitude magick-double)
+   (wave-length magick-double) (method pixel-interpolate-method))
+  :check-error wand)
+(defmagickfun "MagickWaveletDenoiseImage" :boolean
+  ((wand magick-wand) (threshold magick-double) (softness magick-double))
+  :check-error wand)
+(defmagickfun "MagickWhiteBalanceImage" :boolean
+  ((wand magick-wand))
+  :check-error wand)
 (defmagickfun "MagickWhiteThresholdImage" :boolean
   ((wand magick-wand) (threshold pixel-wand))
   :check-error wand)
+
 
 
 ;; Image information
@@ -573,6 +818,7 @@
 ;; Get / set color as string
 
 (defmagickfun "PixelGetColorAsString" magick-string/free ((wand pixel-wand)))
+(defmagickfun "PixelGetColorAsNormalizedString" magick-string/free ((wand pixel-wand)))
 (defmagickfun "PixelSetColor"         :boolean           ((wand pixel-wand) (color magick-string)) :check-error wand)
 
 
@@ -626,6 +872,10 @@
 
 (defmagickfun "PixelGetColorCount" :ulong ((wand pixel-wand)))
 (defmagickfun "PixelSetColorCount" :void  ((wand pixel-wand) (count :ulong)))
+(defmagickfun "PixelGetFuzz" :double ((wand pixel-wand)))
+(defmagickfun "PixelSetFuzz" :void   ((wand pixel-wand) (fuzz magick-double)))
+(defmagickfun "PixelGetIndex" quantum ((wand pixel-wand)))
+(defmagickfun "PixelSetIndex" :void   ((wand pixel-wand) (index quantum)))
 
 
 ;;; Drawing Wands
