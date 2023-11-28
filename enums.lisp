@@ -120,17 +120,17 @@
 (define-enum-from-options "Statistic" statistic-type)
 
 (cffi:defbitfield channel-type
-;  (:undefined  #x00)
+  ;;  (:undefined  #x00)
   (:red        #x01)
-;  (:gray       #x01)
-;  (:cyan       #x01)
+  ;;  (:gray       #x01)
+  ;;  (:cyan       #x01)
   (:green      #x02)
-;  (:magenta    #x02)
+  ;;  (:magenta    #x02)
   (:blue       #x04)
-;  (:yellow     #x04)
+  ;;  (:yellow     #x04)
   (:alpha      #x08)
-;  (:opacity    #x08)
-;  (:matte      #x08)			; deprecated
-;  (:black      #x20)
+  ;;  (:opacity    #x08)
+  ;;  (:matte      #x08)			; deprecated
+  ;;  (:black      #x20)
   (:index      #x20)
   (:all        #xff))
