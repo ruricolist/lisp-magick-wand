@@ -111,6 +111,13 @@
 (define-enum-from-options "Evaluate" magick-evaluate-operator)
 (define-enum-from-options "Metric" metric-type)
 (define-enum-from-options "Distort" distort-method)
+(define-enum-from-options "Orientation" orientation-type)
+(define-enum-from-options "Interpolate" pixel-interpolate-method)
+(define-enum-from-options "AutoThreshold" auto-threshold-method)
+(define-enum-from-options "Morphology" morphology-method)
+(define-enum-from-options "Dither" dither-method)
+(define-enum-from-options "SparseColor" sparse-color-method)
+(define-enum-from-options "Statistic" statistic-type)
 
 (cffi:defbitfield channel-type
 ;  (:undefined  #x00)
