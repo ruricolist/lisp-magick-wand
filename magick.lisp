@@ -167,7 +167,7 @@
 (defmagickfun "MagickGetImageTotalInkDensity" :double            ((wand magick-wand)))
 (defmagickfun "MagickGetImageType"            image-type         ((wand magick-wand)))
 (defmagickfun "MagickGetImageInterlaceScheme" interlace-type     ((wand magick-wand)))
-(defmagickfun "MagickGetImageIndex"           :long              ((wand magick-wand)))
+(defmagickfun "MagickGetImageIndex"           :long              ((wand magick-wand))) ;deprecated
 (defmagickfun "MagickGetImageBackgroundColor" :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
 (defmagickfun "MagickGetImageBorderColor"     :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
 (defmagickfun "MagickGetImageColormapColor"   :boolean           ((wand magick-wand) (index :ulong)
@@ -223,10 +223,12 @@
 
 ;; Get/set pixel data
 
+;; deprecated
 (defmagickfun "MagickGetImagePixels" :boolean
   ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
    (map magick-string) (storage storage-type) (pixels :pointer))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickSetImagePixels" :boolean
   ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
    (map magick-string) (storage storage-type) (pixels :pointer))
@@ -272,12 +274,15 @@
 (defmagickfun "MagickChopImage" :boolean
   ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickClipImage" :boolean
   ((wand magick-wand))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickClipPathImage" :boolean
   ((wand magick-wand) (path-name magick-string) (inside :boolean))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickColorFloodfillImage" :boolean
   ((wand magick-wand) (fill pixel-wand) (fuzz magick-double)
    (border-color pixel-wand) (x :long) (y :long))
@@ -390,16 +395,20 @@
    (black-point magick-double) (gamma magick-double)
    (white-point magick-double))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickMagnifyImage" :boolean
   ((wand magick-wand))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickMapImage" :boolean
   ((wand magick-wand) (map-wand magick-wand) (dither :boolean))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickMatteFloodfillImage" :boolean
   ((wand magick-wand) (opacity quantum) (fuzz magick-double)
    (border-color pixel-wand) (x :long) (y :long))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickMedianFilterImage" :boolean
   ((wand magick-wand) (radius magick-double))
   :check-error wand)
@@ -430,10 +439,12 @@
 (defmagickfun "MagickPaintOpaqueImage" :boolean
   ((wand magick-wand) (target pixel-wand) (fill pixel-wand) (fuzz magick-double))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickPaintOpaqueImageChannel" :boolean
   ((wand magick-wand) (channel channel-type)
    (target pixel-wand) (fill pixel-wand) (fuzz magick-double))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickPaintTransparentImage" :boolean
   ((wand magick-wand) (target pixel-wand) (opacity quantum) (fuzz magick-double))
   :check-error wand)
@@ -453,9 +464,11 @@
   ((wand magick-wand) (num-colors :ulong) (color-space colorspace-type)
    (tree-depth :ulong) (dither :boolean) (measure-error :boolean))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickRadialBlurImage" :boolean
   ((wand magick-wand) (angle magick-double))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickRadialBlurImageChannel" :boolean
   ((wand magick-wand) (channel channel-type) (angle magick-double))
   :check-error wand)
@@ -486,6 +499,7 @@
 (defmagickfun "MagickScaleImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickSeparateImageChannel" :boolean
   ((wand magick-wand) (channel channel-type))
   :check-error wand)
@@ -516,6 +530,7 @@
   ((wand magick-wand) (reference magick-wand)
    (metric metric-type) (distortion (:out :double)))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickGetImageChannelExtrema" :boolean
   ((wand magick-wand) (channel channel-type)
    (min (:out :ulong)) (max (:out :ulong)))
@@ -524,6 +539,7 @@
   ((wand magick-wand) (channel channel-type)
    (mean (:out :double)) (std-dev (:out :double)))
   :check-error wand)
+;; deprecated
 (defmagickfun "MagickGetImageExtrema" :boolean
   ((wand magick-wand)
    (min (:out :ulong)) (max (:out :ulong)))
@@ -634,10 +650,10 @@
 (defmagickfun "DrawGetVectorGraphics"   magick-string/free ((wand drawing-wand)))
 (defmagickfun "DrawGetClipUnits"        clip-path-units    ((wand drawing-wand)))
 (defmagickfun "DrawGetTextDecoration"   decoration-type    ((wand drawing-wand)))
-(defmagickfun "DrawGetFillAlpha"        :double            ((wand drawing-wand)))
+(defmagickfun "DrawGetFillAlpha"        :double            ((wand drawing-wand))) ;deprecated
 (defmagickfun "DrawGetFontSize"         :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetStrokeDashOffset" :double            ((wand drawing-wand)))
-(defmagickfun "DrawGetStrokeAlpha"      :double            ((wand drawing-wand)))
+(defmagickfun "DrawGetStrokeAlpha"      :double            ((wand drawing-wand))) ;deprecated
 (defmagickfun "DrawGetStrokeWidth"      :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetClipRule"         fill-rule          ((wand drawing-wand)))
 (defmagickfun "DrawGetFillRule"         fill-rule          ((wand drawing-wand)))
@@ -653,7 +669,7 @@
 
 (defmagickfun "DrawSetClipRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetClipUnits"        :void ((wand drawing-wand) (units clip-path-units)))
-(defmagickfun "DrawSetFillAlpha"        :void ((wand drawing-wand) (alpha magick-double)))
+(defmagickfun "DrawSetFillAlpha"        :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
 (defmagickfun "DrawSetFillRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetFontSize"         :void ((wand drawing-wand) (size magick-double)))
 (defmagickfun "DrawSetFontStretch"      :void ((wand drawing-wand) (stretch stretch-type)))
@@ -665,7 +681,7 @@
 (defmagickfun "DrawSetStrokeLineCap"    :void ((wand drawing-wand) (cap line-cap)))
 (defmagickfun "DrawSetStrokeLineJoin"   :void ((wand drawing-wand) (join line-join)))
 (defmagickfun "DrawSetStrokeMiterLimit" :void ((wand drawing-wand) (limit :ulong)))
-(defmagickfun "DrawSetStrokeAlpha"      :void ((wand drawing-wand) (alpha magick-double)))
+(defmagickfun "DrawSetStrokeAlpha"      :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
 (defmagickfun "DrawSetStrokeWidth"      :void ((wand drawing-wand) (width magick-double)))
 (defmagickfun "DrawSetTextAlignment"    :void ((wand drawing-wand) (align align-type)))
 (defmagickfun "DrawSetTextAntialias"    :void ((wand drawing-wand) (antialias :boolean)))
