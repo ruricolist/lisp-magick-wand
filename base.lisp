@@ -286,7 +286,15 @@
 
 (cffi:define-foreign-library lib-magick-wand
   (:darwin "libMagickWand.dylib")
-  (:unix (:or "libMagickWand.so" "libWand.so.9" "libWand.so"))
+  (:unix (:or "libMagickWand-7.Q16.so" "libMagickWand-7.Q16.so.2" "libMagickWand-7.Q16.so.3" "libMagickWand-7.Q16.so.4"
+              "libMagickWand-7.Q16.so.5" "libMagickWand-7.Q16.so.6" "libMagickWand-7.Q16.so.7" "libMagickWand-7.Q16.so.8"
+              "libMagickWand-7.Q16HDRI.so" "libMagickWand-7.Q16HDRI.so.2" "libMagickWand-7.Q16HDRI.so.3" "libMagickWand-7.Q16HDRI.so.4"
+              "libMagickWand-7.Q16HDRI.so.5" "libMagickWand-7.Q16HDRI.so.6" "libMagickWand-7.Q16HDRI.so.7" "libMagickWand-7.Q16HDRI.so.8"
+              "libMagickWand-6.Q16.so" "libMagickWand-6.Q16.so.2" "libMagickWand-6.Q16.so.3" "libMagickWand-6.Q16.so.4"
+              "libMagickWand-6.Q16.so.5" "libMagickWand-6.Q16.so.6" "libMagickWand-6.Q16.so.7" "libMagickWand-6.Q16.so.8"
+              "libMagickWand-6.Q16HDRI.so" "libMagickWand-6.Q16HDRI.so.2" "libMagickWand-6.Q16HDRI.so.3" "libMagickWand-6.Q16HDRI.so.4"
+              "libMagickWand-6.Q16HDRI.so.5" "libMagickWand-6.Q16HDRI.so.6" "libMagickWand-6.Q16HDRI.so.7" "libMagickWand-6.Q16HDRI.so.8"
+              "libMagickWand.so" "libWand.so.9" "libWand.so"))
   (t (:default "libWand")))
 (cffi:use-foreign-library lib-magick-wand)
 
