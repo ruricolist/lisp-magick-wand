@@ -188,8 +188,6 @@
   :boolean ((wand magick-wand) (quality :ulong))
   :check-error wand)
 
-(defmagickfun "MagickStripImage"
-  :boolean ((wand magick-wand))
   :check-error wand)
 
 ;; Create/Read/write/remove images
@@ -576,9 +574,6 @@
   :check-error wand)
 (defmagickfun "MagickPolynomialImage" :boolean
   ((wand magick-wand) (num (:dynarray-length :ulong terms)) (terms (:dynarray magick-double)))
-  :check-error wand)
-(defmagickfun "MagickPreviousImage" :boolean
-  ((wand magick-wand))
   :check-error wand)
 (defmagickfun "MagickPosterizeImage" :boolean
   ((wand magick-wand) (levels :ulong) (dither :boolean))
