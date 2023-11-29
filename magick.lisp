@@ -855,7 +855,7 @@
   :check-error wand)
 (defmagickfun "MagickResampleImage" :boolean
   ((wand magick-wand) (x-resolution magick-double) (y-resolution magick-double)
-   (filter filter-type) (blur magick-double))
+   (filter filter-type))
   :check-error wand)
 (defmagickfun "MagickResetImagePage" :boolean
   ((wand magick-wand) (page magick-string))
