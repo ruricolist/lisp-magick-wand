@@ -237,6 +237,12 @@
 
 ;; Image operations
 
+(defmagickfun "MagickAdaptiveResizeImage" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong))
+  :check-error wand)
+(defmagickfun "MagickAdaptiveSharpenImage" :boolean
+  ((wand magick-wand) (radius magick-double) (sigma magick-double))
+  :check-error wand)
 (defmagickfun "MagickAdaptiveThresholdImage" :boolean
   ((wand magick-wand) (width :ulong) (height :ulong) (offset :long))
   :check-error wand)
@@ -584,11 +590,11 @@
    (length (:dynarray-length size-t profile)))
   :check-error wand)
 (defmagickfun "MagickQuantizeImage" :boolean
-  ((wand magick-wand) (num-colors :ulong) (color-space colorspace-type)
+  ((wand magick-wand) (num-colors :ulong) (colorspace colorspace-type)
    (tree-depth :ulong) (dither :boolean) (measure-error :boolean))
   :check-error wand)
 (defmagickfun "MagickQuantizeImages" :boolean
-  ((wand magick-wand) (num-colors :ulong) (color-space colorspace-type)
+  ((wand magick-wand) (num-colors :ulong) (colorspace colorspace-type)
    (tree-depth :ulong) (dither :boolean) (measure-error :boolean))
   :check-error wand)
 ;; deprecated
