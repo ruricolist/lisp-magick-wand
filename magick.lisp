@@ -152,42 +152,272 @@
 (defmagickfun "MagickSetType"               :boolean ((wand magick-wand) (type image-type))                 :check-error wand)
 
 
-;; Image Attributes
-
-(defmagickfun "MagickGetImageAttribute"       magick-string/free ((wand magick-wand) (key magick-string)))
-(defmagickfun "MagickGetImageFilename"        magick-string/free ((wand magick-wand)) :check-error wand)
-(defmagickfun "MagickGetImageFormat"          magick-string/free ((wand magick-wand)) :check-error wand)
-(defmagickfun "MagickGetImageSignature"       magick-string/free ((wand magick-wand)) :check-error wand)
-(defmagickfun "MagickIdentifyImage"           magick-string/free ((wand magick-wand)) :check-error wand)
-(defmagickfun "MagickGetImageCompose"         composite-operator ((wand magick-wand)))
-(defmagickfun "MagickGetImageColorspace"      colorspace-type    ((wand magick-wand)))
-(defmagickfun "MagickGetImageCompression"     compression-type   ((wand magick-wand)))
-(defmagickfun "MagickGetImageDispose"         dispose-type       ((wand magick-wand)))
-(defmagickfun "MagickGetImageGamma"           :double            ((wand magick-wand)))
-(defmagickfun "MagickGetImageTotalInkDensity" :double            ((wand magick-wand)))
-(defmagickfun "MagickGetImageType"            image-type         ((wand magick-wand)))
-(defmagickfun "MagickGetImageInterlaceScheme" interlace-type     ((wand magick-wand)))
-(defmagickfun "MagickGetImageIndex"           :long              ((wand magick-wand))) ;deprecated
-(defmagickfun "MagickGetImageBackgroundColor" :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
-(defmagickfun "MagickGetImageBorderColor"     :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
-(defmagickfun "MagickGetImageColormapColor"   :boolean           ((wand magick-wand) (index :ulong)
-                                                                  (color pixel-wand))                      :check-error wand)
-(defmagickfun "MagickGetImageMatte"           :boolean           ((wand magick-wand)))
-(defmagickfun "MagickGetImageMatteColor"      :boolean           ((wand magick-wand) (color pixel-wand))   :check-error wand)
-(defmagickfun "MagickGetImagePage"            :boolean           ((wand magick-wand)
-                                                                  (width (:out :ulong)) (height (:out :ulong))
-                                                                  (x (:out :long)) (y (:out :long)))       :check-error wand)
-(defmagickfun "MagickGetImageResolution"      :boolean           ((wand magick-wand) (x (:out :double))
-                                                                  (y (:out :double)))                      :check-error wand)
-(defmagickfun "MagickGetImageWidth"           :ulong             ((wand magick-wand)))
-(defmagickfun "MagickGetImageHeight"          :ulong             ((wand magick-wand)))
-(defmagickfun "MagickGetImageAlphaChannel"    :boolean           ((wand magick-wand)))
-(defmagickfun "MagickGetImageOrientation"     orientation-type   ((wand magick-wand)))
-
-(defmagickfun "MagickSetImageCompressionQuality"
-  :boolean ((wand magick-wand) (quality :ulong))
+;; Image get params
+(defmagickfun "MagickGetImageAlphaChannel" :boolean
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageBackgroundColor" :boolean
+  ((wand magick-wand) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageBluePrimary" :boolean
+  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageBorderColor" :boolean
+  ((wand magick-wand) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageKurtosis" :boolean
+  ((wand magick-wand) (kurtosis (:out :double)) (skewness (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageMean" :boolean
+  ((wand magick-wand) (mean (:out :double)) (standard-deviation (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageRange" :boolean
+  ((wand magick-wand) (minima (:out :double)) (maxima (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageColormapColor" :boolean
+  ((wand magick-wand) (index :ulong) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageColors" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageColorspace" colorspace-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageCompose" composite-operator
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageCompression" compression-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageCompressionQuality" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageDelay" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageDepth" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageDispose" dispose-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageDistortion" :boolean
+  ((wand magick-wand) (reference magick-wand)
+   (metric metric-type) (distortion (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageDistortions" :double
+  ((wand magick-wand) (reference magick-wand)(metric metric-type)))
+(defmagickfun "MagickGetImageEndian" endian-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageFilename" magick-string/free
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageFilter" filter-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageFormat" magick-string/free
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageFuzz" :double
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageGamma" :double
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageGravity" gravity-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageGreenPrimary" :boolean
+  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageHeight" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageInterlaceScheme" interlace-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageInterpolateMethod" pixel-interpolate-method
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageIterations" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageLength" :boolean
+  ((wand magick-wand) (x (:out :ulong)))
+  :check-error wand)
+(defmagickfun "MagickGetImageMatteColor" :boolean
+  ((wand magick-wand) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageOrientation" orientation-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImagePage" :boolean
+  ((wand magick-wand) (width (:out :ulong)) (height (:out :ulong))
+   (x (:out :long)) (y (:out :long)))
+  :check-error wand)
+(defmagickfun "MagickGetImagePixelColor" :boolean
+  ((wand magick-wand) (x :long) (y :long) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageRedPrimary" :boolean
+  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageRenderingIntent" rendering-intent
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageResolution" :boolean
+  ((wand magick-wand) (x (:out :double))(y (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageScene" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageSignature" magick-string/free
+  ((wand magick-wand))
+  :check-error wand)
+(defmagickfun "MagickGetImageTicksPerSecond" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageType" image-type
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageVirtualPixelMethod" virtual-pixel-method
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageWhitePoint" :boolean
+  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
+  :check-error wand)
+(defmagickfun "MagickGetImageWidth" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetNumberImages" :ulong
+  ((wand magick-wand)))
+(defmagickfun "MagickGetImageTotalInkDensity" :double
+  ((wand magick-wand)))
+(defmagickfun "MagickIdentifyImage" magick-string/free
+  ((wand magick-wand))
+  :check-error wand)
+;; deprecated
+(defmagickfun "MagickGetImageAttribute" magick-string/free
+  ((wand magick-wand) (key magick-string)))
+;; deprecated
+(defmagickfun "MagickGetImageIndex" :long
+  ((wand magick-wand)))
+;; deprecated
+(defmagickfun "MagickGetImageMatte" :boolean
+  ((wand magick-wand)))
+;; deprecated
+(defmagickfun "MagickGetImageChannelDistortion" :boolean
+  ((wand magick-wand) (reference magick-wand) (channel channel-type)
+   (metric metric-type) (distortion (:out :double)))
+  :check-error wand)
+;; deprecated
+(defmagickfun "MagickGetImageChannelExtrema" :boolean
+  ((wand magick-wand) (channel channel-type)
+   (min (:out :ulong)) (max (:out :ulong)))
+  :check-error wand)
+;; deprecated
+(defmagickfun "MagickGetImageChannelMean" :boolean
+  ((wand magick-wand) (channel channel-type)
+   (mean (:out :double)) (std-dev (:out :double)))
+  :check-error wand)
+;; deprecated
+(defmagickfun "MagickGetImageExtrema" :boolean
+  ((wand magick-wand)
+   (min (:out :ulong)) (max (:out :ulong)))
   :check-error wand)
 
+;; Image set params
+(defmagickfun "MagickSetImageAlphaChannel" :boolean
+  ((wand magick-wand) (alpha-type alpha-channel-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageBackgroundColor" :boolean
+  ((wand magick-wand) (background pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageBluePrimary" :boolean
+  ((wand magick-wand) (x magick-double) (y magick-double) (z magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageBorderColor" :boolean
+  ((wand magick-wand) (border pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageChannelMask" :boolean
+  ((wand magick-wand) (channel-mask channel-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageColor" :boolean
+  ((wand magick-wand) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageColormapColor" :boolean
+  ((wand magick-wand) (index :ulong) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageColorspace" :boolean
+  ((wand magick-wand) (colorspace colorspace-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageCompose" :boolean
+  ((wand magick-wand) (compose composite-operator))
+  :check-error wand)
+(defmagickfun "MagickSetImageCompression" :boolean
+  ((wand magick-wand) (compression compression-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageCompressionQuality" :boolean
+  ((wand magick-wand) (quality :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageDelay" :boolean
+  ((wand magick-wand) (delay :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageDepth" :boolean
+  ((wand magick-wand) (depth :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageDispose" :boolean
+  ((wand magick-wand) (dispose dispose-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageEndian" :boolean
+  ((wand magick-wand) (endian endian-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageExtent" :boolean
+  ((wand magick-wand) (columns :ulong) (rows :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageFilename" :boolean
+  ((wand magick-wand) (filename magick-string))
+  :check-error wand)
+(defmagickfun "MagickSetImageFilter" :boolean
+  ((wand magick-wand) (filter filter-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageFormat" :boolean
+  ((wand magick-wand) (format magick-string))
+  :check-error wand)
+(defmagickfun "MagickSetImageFuzz" :boolean
+  ((wand magick-wand) (fuzz magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageGamma" :boolean
+  ((wand magick-wand) (gamma magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageGravity" :boolean
+  ((wand magick-wand) (gravity gravity-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageGreenPrimary" :boolean
+  ((wand magick-wand) (x magick-double) (y magick-double) (z magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageInterlaceScheme" :boolean
+  ((wand magick-wand) (interlace interlace-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageInterpolateMethod" :boolean
+  ((wand magick-wand) (method pixel-interpolate-method))
+  :check-error wand)
+(defmagickfun "MagickSetImageIterations" :boolean
+  ((wand magick-wand) (iterations :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageMatteColor" :boolean
+  ((wand magick-wand) (matte pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageAlpha" :boolean
+  ((wand magick-wand) (alpha magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageOrientation" :boolean
+  ((wand magick-wand) (orientation orientation-type))
+  :check-error wand)
+(defmagickfun "MagickSetImagePage" :boolean
+  ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long))
+  :check-error wand)
+(defmagickfun "MagickSetImagePixelColor" :boolean
+  ((wand magick-wand) (x :long) (y :long) (color pixel-wand))
+  :check-error wand)
+(defmagickfun "MagickSetImageRedPrimary" :boolean
+  ((wand magick-wand) (x magick-double) (y magick-double) (z magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageRenderingIntent" :boolean
+  ((wand magick-wand) (rendering-intent rendering-intent))
+  :check-error wand)
+(defmagickfun "MagickSetImageResolution" :boolean
+  ((wand magick-wand) (x-resolution magick-double) (y-resolution magick-double))
+  :check-error wand)
+(defmagickfun "MagickSetImageScene" :boolean
+  ((wand magick-wand) (scene :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageTicksPerSecond" :boolean
+  ((wand magick-wand) (ticks :ulong))
+  :check-error wand)
+(defmagickfun "MagickSetImageType" :boolean
+  ((wand magick-wand) (image-type image-type))
+  :check-error wand)
+(defmagickfun "MagickSetImageVirtualPixelMethod" :boolean
+  ((wand magick-wand) (method virtual-pixel-method))
+  :check-error wand)
+(defmagickfun "MagickSetImageWhitePoint" :boolean
+  ((wand magick-wand) (x magick-double) (y magick-double) (z magick-double))
   :check-error wand)
 
 ;; Create/Read/write/remove images
@@ -762,46 +992,6 @@
   :check-error wand)
 
 
-
-;; Image information
-
-(defmagickfun "MagickGetImageBluePrimary" :boolean
-  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
-  :check-error wand)
-(defmagickfun "MagickGetImageChannelDistortion" :boolean
-  ((wand magick-wand) (reference magick-wand) (channel channel-type)
-   (metric metric-type) (distortion (:out :double)))
-  :check-error wand)
-(defmagickfun "MagickGetImageDistortion" :boolean
-  ((wand magick-wand) (reference magick-wand)
-   (metric metric-type) (distortion (:out :double)))
-  :check-error wand)
-;; deprecated
-(defmagickfun "MagickGetImageChannelExtrema" :boolean
-  ((wand magick-wand) (channel channel-type)
-   (min (:out :ulong)) (max (:out :ulong)))
-  :check-error wand)
-(defmagickfun "MagickGetImageChannelMean" :boolean
-  ((wand magick-wand) (channel channel-type)
-   (mean (:out :double)) (std-dev (:out :double)))
-  :check-error wand)
-;; deprecated
-(defmagickfun "MagickGetImageExtrema" :boolean
-  ((wand magick-wand)
-   (min (:out :ulong)) (max (:out :ulong)))
-  :check-error wand)
-(defmagickfun "MagickGetImageGreenPrimary" :boolean
-  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
-  :check-error wand)
-(defmagickfun "MagickGetImagePixelColor" :boolean
-  ((wand magick-wand) (x :long) (y :long) (color pixel-wand))
-  :check-error wand)
-(defmagickfun "MagickGetImageRedPrimary" :boolean
-  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
-  :check-error wand)
-(defmagickfun "MagickGetImageWhitePoint" :boolean
-  ((wand magick-wand) (x (:out :double)) (y (:out :double)))
-  :check-error wand)
 
 
 ;;; Pixel Wands
