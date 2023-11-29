@@ -118,6 +118,11 @@
 (define-enum-from-options "Dither" dither-method)
 (define-enum-from-options "SparseColor" sparse-color-method)
 (define-enum-from-options "Statistic" statistic-type)
+(define-enum-from-options "Endian" endian-type)
+(define-enum-from-options "Intent" rendering-intent)
+(define-enum-from-options "VirtualPixel" virtual-pixel-method)
+(define-enum-from-options "Alpha" alpha-channel-type)
+
 
 (cffi:defbitfield channel-type
   ;;  (:undefined  #x00)
