@@ -1,31 +1,3 @@
-;;;; ImageMagick binding for Common Lisp
-;;;; Copyright (c) 2006, 2007, 2008, 2009  Hans Bulfone <hans@nil.at>
-;;;; All rights reserved.
-;;;;
-;;;; Redistribution and use in source and binary forms, with or without
-;;;; modification, are permitted provided that the following conditions are met:
-;;;;
-;;;;     * Redistributions of source code must retain the above copyright notice,
-;;;;       this list of conditions and the following disclaimer.
-;;;;     * Redistributions in binary form must reproduce the above copyright
-;;;;       notice, this list of conditions and the following disclaimer in the
-;;;;       documentation and/or other materials provided with the distribution.
-;;;;     * Neither the name of the author nor the names of his contributors may
-;;;;       be used to endorse or promote products derived from this software
-;;;;       without specific prior written permission.
-;;;;
-;;;; THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-;;;; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-;;;; THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-;;;; PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-;;;; CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-;;;; EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-;;;; PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-;;;; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-;;;; WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-;;;; OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-;;;; ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 (in-package :lisp-magick-wand)
 
 (defgeneric %error-condition (value type)
@@ -286,7 +258,15 @@
 
 (cffi:define-foreign-library lib-magick-wand
   (:darwin "libMagickWand.dylib")
-  (:unix (:or "libMagickWand.so" "libWand.so.9" "libWand.so"))
+  (:unix (:or "libMagickWand-7.Q16.so" "libMagickWand-7.Q16.so.2" "libMagickWand-7.Q16.so.3" "libMagickWand-7.Q16.so.4"
+              "libMagickWand-7.Q16.so.5" "libMagickWand-7.Q16.so.6" "libMagickWand-7.Q16.so.7" "libMagickWand-7.Q16.so.8"
+              "libMagickWand-7.Q16HDRI.so" "libMagickWand-7.Q16HDRI.so.2" "libMagickWand-7.Q16HDRI.so.3" "libMagickWand-7.Q16HDRI.so.4"
+              "libMagickWand-7.Q16HDRI.so.5" "libMagickWand-7.Q16HDRI.so.6" "libMagickWand-7.Q16HDRI.so.7" "libMagickWand-7.Q16HDRI.so.8"
+              "libMagickWand-6.Q16.so" "libMagickWand-6.Q16.so.2" "libMagickWand-6.Q16.so.3" "libMagickWand-6.Q16.so.4"
+              "libMagickWand-6.Q16.so.5" "libMagickWand-6.Q16.so.6" "libMagickWand-6.Q16.so.7" "libMagickWand-6.Q16.so.8"
+              "libMagickWand-6.Q16HDRI.so" "libMagickWand-6.Q16HDRI.so.2" "libMagickWand-6.Q16HDRI.so.3" "libMagickWand-6.Q16HDRI.so.4"
+              "libMagickWand-6.Q16HDRI.so.5" "libMagickWand-6.Q16HDRI.so.6" "libMagickWand-6.Q16HDRI.so.7" "libMagickWand-6.Q16HDRI.so.8"
+              "libMagickWand.so" "libWand.so.9" "libWand.so"))
   (t (:default "libWand")))
 (cffi:use-foreign-library lib-magick-wand)
 

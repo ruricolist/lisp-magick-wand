@@ -1,8 +1,12 @@
-This is a fork of LISP-MAGICK, by Hans Bulfone, released under the BSD
-license. It is compatible with recent versions of ImageMagick (>
-6.6.9.7) and has a slightly different API.
+# Lisp-Magick-Wand
 
-### Usage
+Common Lisp bindings to ImageMagick's
+[MagicWand](http://www.imagemagick.org/script/magick-wand.php) API. \
+This is a fork of [LISP-MAGICK][lisp-magick]. \
+It is compatible with recent versions of ImageMagick (7.x) 
+and has a slightly different API.
+
+## Usage
 
 For the most part, you can use the [C API][api] as a reference.
 Translations follow a few simple rules:
@@ -18,7 +22,7 @@ Translations follow a few simple rules:
   or a list can be passed in CL-MAGICK, and the length parameter is
   omitted. `nil` is passed as a `NULL` pointer (but `#()` is not).
 
-### Example
+## Example
 
 ``` lisp
 (defpackage :lisp-magick-examples
@@ -54,4 +58,12 @@ Translations follow a few simple rules:
     (magick:write-image wand filename)))
 ```
 
+## Contributors
+
+- [Hans Bulfone](http://www.nil.at/)
+- [Paul M. Rodriguez](https://github.com/ruricolist)
+- [Dmitrii Kosenkov](https://github.com/Junker)
+
+
 [api]: http://www.imagemagick.org/script/magick-wand.php
+[lisp-magick]: http://www.nil.at/software/lisp-magick.html
