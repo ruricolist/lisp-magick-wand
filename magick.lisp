@@ -834,8 +834,7 @@
   ((wand magick-wand) (page magick-string))
   :check-error wand)
 (defmagickfun "MagickResizeImage" :boolean
-  ((wand magick-wand) (columns :ulong) (rows :ulong)
-   (filter filter-type) (blur magick-double))
+  ((wand magick-wand) (columns :ulong) (rows :ulong) (filter filter-type))
   :check-error wand)
 (defmagickfun "MagickRollImage" :boolean
   ((wand magick-wand) (x :long) (y :long))
