@@ -13,8 +13,9 @@
 
 
 (defmethod initialize-instance :after ((img image) &key)
-  (trivial-garbage:finalize img
-                            (lambda () (magick:destroy-pixel-wand (image-wand img)))))
+  (let ((wand (image-wand img)))
+    (trivial-garbage:finalize img
+                              (lambda () (magick:destroy-pixel-wand wand)))))
 
 (defmethod after-load ((img image))
   (magick:auto-orient-image (image-wand img))
