@@ -94,6 +94,11 @@
 (define-enum-from-options "Intent" rendering-intent)
 (define-enum-from-options "VirtualPixel" virtual-pixel-method)
 (define-enum-from-options "Alpha" alpha-channel-type)
+(define-enum-from-options "Layers" layer-method)
+(define-enum-from-options "Complex" complex-operator)
+(define-enum-from-options "PixelMask" pixel-mask)
+(define-enum-from-options "Mode" montage-mode)
+(define-enum-from-options "Preview" preview-type)
 
 
 (cffi:defbitfield channel-type

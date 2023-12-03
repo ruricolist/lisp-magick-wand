@@ -64,11 +64,30 @@
 
 ;; Creation, destruction, etc.
 
-(defmagickfun "NewMagickWand"     magick-wand ())
-(defmagickfun "DestroyMagickWand" magick-wand ((wand magick-wand)))
-(defmagickfun "IsMagickWand"      :boolean    ((wand magick-wand)))
-(defmagickfun "CloneMagickWand"   magick-wand ((wand magick-wand)))
-(defmagickfun "ClearMagickWand"   :void       ((wand magick-wand)))
+(defmagickfun "NewMagickWand"              magick-wand ())
+(defmagickfun "DestroyMagickWand"          magick-wand ((wand magick-wand)))
+(defmagickfun "IsMagickWand"               :boolean    ((wand magick-wand)))
+(defmagickfun "CloneMagickWand"            magick-wand ((wand magick-wand)))
+(defmagickfun "ClearMagickWand"            :void       ((wand magick-wand)))
+(defmagickfun "MagickCoalesceImages"       magick-wand ((wand magick-wand)))
+(defmagickfun "MagickCombineImages"        magick-wand ((wand magick-wand) (colorspace colorspace-type)))
+(defmagickfun "MagickCompareImagesLayers"  magick-wand ((wand magick-wand) (method layer-method)))
+(defmagickfun "MagickCompareImages"        magick-wand ((wand magick-wand) (metric metric-type) (distortion magick-double)))
+(defmagickfun "MagickComplexImages"        magick-wand ((wand magick-wand) (complex complex-operator)))
+(defmagickfun "MagickDeconstructImages"    magick-wand ((wand magick-wand)))
+(defmagickfun "MagickFxImage"              magick-wand ((wand magick-wand) (expression magick-string)))
+(defmagickfun "MagickGetImageMask"         magick-wand ((wand magick-wand) (type pixel-mask)))
+(defmagickfun "MagickGetImageRegion"       magick-wand ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long)))
+(defmagickfun "MagickMergeImageLayers"     magick-wand ((wand magick-wand) (method layer-method)))
+(defmagickfun "MagickMontageImage"         magick-wand ((wand magick-wand) (drawing-wand drawing-wand) (tile-geometry magick-string)
+                                                        (thumbnail-geometry magick-string) (mode montage-mode)))
+(defmagickfun "MagickMorphImages"          magick-wand ((wand magick-wand) (number-frames :ulong)))
+(defmagickfun "MagickOptimizeImageLayers"  magick-wand ((wand magick-wand)))
+(defmagickfun "MagickPreviewImages"        magick-wand ((wand magick-wand) (preview preview-type)))
+(defmagickfun "MagickSmushImages"          magick-wand ((wand magick-wand) (stack :boolean) (offset :long)))
+(defmagickfun "MagickSteganoImage"         magick-wand ((wand magick-wand) (watermark-wand magick-wand) (offset :long)))
+(defmagickfun "MagickStereoImage"          magick-wand ((wand magick-wand) (offset-wand magick-wand)))
+(defmagickfun "MagickTextureImage"         magick-wand ((wand magick-wand) (texture-wand magick-wand)))
 
 
 ;; Image Iterator
