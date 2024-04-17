@@ -790,7 +790,7 @@
   :check-error wand)
 (defmagickfun "MagickPolaroidImage" :boolean
   ((wand magick-wand) (drawing-wand drawing-wand) (caption magick-string)
-                      (angle magick-double) (method pixel-interpolate-method))
+   (angle magick-double) (method pixel-interpolate-method))
   :check-error wand)
 (defmagickfun "MagickPolynomialImage" :boolean
   ((wand magick-wand) (num (:dynarray-length :ulong terms)) (terms (:dynarray magick-double)))
