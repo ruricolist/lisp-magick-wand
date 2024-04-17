@@ -420,6 +420,11 @@
 (defmagickfun "MagickPingImage" :boolean
   ((wand magick-wand) (filename magick-string))
   :check-error wand)
+(defmagickfun "MagickPingImageBlob" :boolean
+  ((wand magick-wand)
+   (blob (:dynarray :uint8))
+   (length (:dynarray-length size-t blob)))
+  :check-error wand)
 (defmagickfun "MagickReadImage" :boolean
   ((wand magick-wand) (filename magick-string))
   :check-error wand)
@@ -579,12 +584,7 @@
    (order (:dynarray-length :ulong kernel :expr (isqrt :l)))
    (kernel (:dynarray magick-double)))
   :check-error wand)
-(defmagickfun "MagickCommentImage" :boolean
-  ((wand magick-wand) (comment magick-string))
-  :check-error wand)
-(defmagickfun "MagickContrastImage" :boolean
-  ((wand magick-wand) (sharpen :boolean))
-  :check-error wand)
+
 (defmagickfun "MagickContrastStretchImage" :boolean
   ((wand magick-wand) (black-point magick-double) (white-point magick-double))
   :check-error wand)
@@ -787,14 +787,6 @@
 ;; deprecated
 (defmagickfun "MagickPaintTransparentImage" :boolean
   ((wand magick-wand) (target pixel-wand) (opacity quantum) (fuzz magick-double))
-  :check-error wand)
-(defmagickfun "MagickPingImage" :boolean
-  ((wand magick-wand) (filename magick-string))
-  :check-error wand)
-(defmagickfun "MagickPingImageBlob" :boolean
-  ((wand magick-wand)
-   (blob (:dynarray :uint8))
-   (length (:dynarray-length size-t blob)))
   :check-error wand)
 (defmagickfun "MagickPolaroidImage" :boolean
   ((wand magick-wand) (drawing-wand drawing-wand) (caption magick-string)
