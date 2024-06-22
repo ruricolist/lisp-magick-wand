@@ -563,7 +563,7 @@
   ((wand magick-wand) (comment magick-string))
   :check-error wand)
 (defmagickfun "MagickCompositeImage" :boolean
-  ((wand magick-wand) (src magick-wand) (compose composite-operator)
+  ((wand magick-wand) (src magick-wand) (compose composite-operator) (clip-to-self :boolean)
    (x :long) (y :long))
   :check-error wand)
 (defmagickfun "MagickConstituteImage" :boolean
