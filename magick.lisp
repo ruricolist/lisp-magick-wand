@@ -76,6 +76,7 @@
 (defmagickfun "MagickComplexImages"        magick-wand ((wand magick-wand) (complex complex-operator)))
 (defmagickfun "MagickDeconstructImages"    magick-wand ((wand magick-wand)))
 (defmagickfun "MagickFxImage"              magick-wand ((wand magick-wand) (expression magick-string)))
+(defmagickfun "MagickGetImage"         	   magick-wand ((wand magick-wand)))
 (defmagickfun "MagickGetImageMask"         magick-wand ((wand magick-wand) (type pixel-mask)))
 (defmagickfun "MagickGetImageRegion"       magick-wand ((wand magick-wand) (width :ulong) (height :ulong) (x :long) (y :long)))
 (defmagickfun "MagickMergeImageLayers"     magick-wand ((wand magick-wand) (method layer-method)))
@@ -94,6 +95,7 @@
 
 (defmagickfun "MagickResetIterator"    :void    ((wand magick-wand)))
 (defmagickfun "MagickSetFirstIterator" :void    ((wand magick-wand)))
+(defmagickfun "MagickSetIteratorIndex" :boolean ((wand magick-wand) (index :long)))
 (defmagickfun "MagickSetLastIterator"  :void    ((wand magick-wand)))
 (defmagickfun "MagickHasNextImage"     :boolean ((wand magick-wand)))
 (defmagickfun "MagickHasPreviousImage" :boolean ((wand magick-wand)))
@@ -128,8 +130,8 @@
 (defmagickfun "MagickSetCompression"        :boolean ((wand magick-wand) (compression compression-type))    :check-error wand)
 (defmagickfun "MagickSetCompressionQuality" :boolean ((wand magick-wand) (quality :ulong))                  :check-error wand)
 (defmagickfun "MagickSetFilename"           :boolean ((wand magick-wand) (filename magick-string))          :check-error wand)
-(defmagickfun "MagickSetFont"               :boolean ((wand magick-wand) (font magick-string))              :check-error wand)
-(defmagickfun "MagickSetFormat"             :boolean ((wand magick-wand) (format magick-string))            :check-error wand)
+(defmagickfun "MagickSetFont"               :boolean ((wand magick-wand) (format magick-string))            :check-error wand)
+(defmagickfun "MagickSetFormat"             :boolean ((wand magick-wand) (font magick-string))              :check-error wand)
 (defmagickfun "MagickSetInterlaceScheme"    :boolean ((wand magick-wand) (interlace-scheme interlace-type)) :check-error wand)
 (defmagickfun "MagickSetOption"             :boolean ((wand magick-wand) (key magick-string)
                                                       (value magick-string))                                :check-error wand)
@@ -448,6 +450,9 @@
 (defmagickfun "MagickWriteImage" :boolean
   ((wand magick-wand) (filename magick-string))
   :check-error wand)
+(defmagickfun "MagickWriteImages" :boolean
+  ((wand magick-wand) (filename magick-string) (adjoin_ :boolean));;testing
+  :check-error wand)
 
 
 ;; Get/set pixel data
@@ -568,6 +573,10 @@
   ((wand magick-wand) (src magick-wand) (compose composite-operator) (clip-to-self :boolean)
    (x :long) (y :long))
   :check-error wand)
+(defmagickfun "MagickCompositeLayers" :boolean
+  ((wand magick-wand) (src magick-wand) (compose composite-operator)
+   (x :long) (y :long))
+  :check-error wand)
 (defmagickfun "MagickConstituteImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong) (map magick-string)
    (storage storage-type) (pixels :pointer))
@@ -683,6 +692,9 @@
 (defmagickfun "MagickImplodeImage" :boolean
   ((wand magick-wand) (amount magick-double))
   :check-error wand)
+;; (defmagickfun "MagickImportImagePixels" :boolean
+;;   ((wand magick-wand) (x :ulong) (y :ulong) (columns :ulong) (rows :ulong) (map magick-string) (storage storage-type) (pixels :pointer))
+;;   :check-error wand)
 (defmagickfun "MagickInterpolativeResizeImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong) (method pixel-interpolate-method))
   :check-error wand)
