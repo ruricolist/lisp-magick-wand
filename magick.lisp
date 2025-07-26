@@ -451,7 +451,7 @@
   ((wand magick-wand) (filename magick-string))
   :check-error wand)
 (defmagickfun "MagickWriteImages" :boolean
-  ((wand magick-wand) (filename magick-string) (adjoin_ :boolean));;testing
+  ((wand magick-wand) (filename magick-string) (adjoin_ :boolean))
   :check-error wand)
 
 
@@ -692,9 +692,6 @@
 (defmagickfun "MagickImplodeImage" :boolean
   ((wand magick-wand) (amount magick-double))
   :check-error wand)
-;; (defmagickfun "MagickImportImagePixels" :boolean
-;;   ((wand magick-wand) (x :ulong) (y :ulong) (columns :ulong) (rows :ulong) (map magick-string) (storage storage-type) (pixels :pointer))
-;;   :check-error wand)
 (defmagickfun "MagickInterpolativeResizeImage" :boolean
   ((wand magick-wand) (columns :ulong) (rows :ulong) (method pixel-interpolate-method))
   :check-error wand)
