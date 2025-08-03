@@ -11,7 +11,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          yum install -y ImageMagick-devel sbcl wget
+          yum install -y git ImageMagick-devel sbcl wget
 
       - name: Install Quicklisp
         run: |
@@ -20,12 +20,9 @@ jobs:
           sbcl --disable-debugger --load ~/quicklisp.lisp --eval '(quicklisp-quickstart:install)' --quit
 
       - name: Clone
-        uses: actions/checkout@v4
-
-      - name: Copy files
         run: |
-          ls /github/workspace
-          cp -a /github/workspace/* ~/quicklisp/local-projects/
+          cd ~/quicklisp/local-projects
+          git clone --depth=1 https://github.com/ruricolist/lisp-magick-wand.git
 
       - name: Load lisp-magic-wand
         run: |
