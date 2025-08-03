@@ -1,0 +1,28 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    container: fedora:42
+    steps:
+
+      - name: Install dependencies
+        run: |
+          yum install -y ImageMagick-devel sbcl wget
+
+      - name: Install Quicklisp
+        run: |
+          cd
+          wget https://beta.quicklisp.org/quicklisp.lisp
+          sbcl --disable-debugger --load ~/quicklisp.lisp --eval '(quicklisp-quickstart:install)' --quit
+
+      - name: Clone
+        uses: actions/checkout@v4
+
+      - name: Load lisp-magic-wand
+        run: |
+          export CL_SOURCE_REGISTRY="$(pwd):"
+          sbcl --disable-debugger --load ~/quicklisp/setup.lisp --eval '(ql:register-local-projects)' --eval '(ql:quickload :lisp-magick-wand)' --quit
