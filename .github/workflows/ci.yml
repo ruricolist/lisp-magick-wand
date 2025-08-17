@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  DYNAMIC_SPACE_SIZE_MB: '16384'
+
 jobs:
   test:
     name: Test
@@ -25,4 +28,23 @@ jobs:
       - name: Load lisp-magic-wand
         run: |
           export CL_SOURCE_REGISTRY="$(pwd):"
-          sbcl --disable-debugger --load ~/quicklisp/setup.lisp --eval '(ql:register-local-projects)' --eval '(ql:quickload :lisp-magick-wand)' --quit
+          sbcl \
+          --dynamic-space-size ${DYNAMIC_SPACE_SIZE_MB} \
+          --disable-debugger \
+          --load ~/quicklisp/setup.lisp \
+          --eval '(ql:register-local-projects)' \
+          --eval '(ql:quickload :lisp-magick-wand)' \
+          --quit
+
+      - name: Test lisp-magic-wand
+        run: |
+          export CL_SOURCE_REGISTRY="$(pwd):"
+          sbcl \
+          --dynamic-space-size ${DYNAMIC_SPACE_SIZE_MB} \
+          --disable-debugger \
+          --load ~/quicklisp/setup.lisp \
+          --eval '(ql:register-local-projects)' \
+          --eval '(ql:quickload :lisp-magick-wand/test)' \
+          --eval '(setf fiveam:*on-failure* :debug)' \
+          --eval '(asdf:test-system :lisp-magick-wand)' \
+          --quit
