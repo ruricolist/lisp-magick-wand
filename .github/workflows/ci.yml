@@ -31,6 +31,7 @@ jobs:
         run: |
           export CL_SOURCE_REGISTRY="$(pwd):"
           sbcl --disable-debugger \
+          --dynamic-space-size 8192 \
           --load ~/quicklisp/setup.lisp \
           --eval '(ql:register-local-projects)' \
           --eval '(ql:quickload :lisp-magick-wand/test)' \
