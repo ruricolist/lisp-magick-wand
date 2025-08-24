@@ -25,7 +25,13 @@ jobs:
       - name: Load lisp-magic-wand
         run: |
           export CL_SOURCE_REGISTRY="$(pwd):"
-          sbcl --disable-debugger --load ~/quicklisp/setup.lisp --eval '(ql:register-local-projects)' --eval '(ql:quickload :lisp-magick-wand)' --quit
+          sbcl \
+          --dynamic-space-size 8192 \
+          --disable-debugger \
+          --load ~/quicklisp/setup.lisp \
+          --eval '(ql:register-local-projects)' \
+          --eval '(ql:quickload :lisp-magick-wand)' \
+          --quit
 
       - name: Test lisp-magic-wand
         run: |
