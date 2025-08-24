@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  DYNAMIC_SPACE_SIZE_MB: '16384'
+
 jobs:
   test:
     name: Test
@@ -26,7 +29,7 @@ jobs:
         run: |
           export CL_SOURCE_REGISTRY="$(pwd):"
           sbcl \
-          --dynamic-space-size 8192 \
+          --dynamic-space-size ${DYNAMIC_SPACE_SIZE_MB} \
           --disable-debugger \
           --load ~/quicklisp/setup.lisp \
           --eval '(ql:register-local-projects)' \
@@ -37,7 +40,7 @@ jobs:
         run: |
           export CL_SOURCE_REGISTRY="$(pwd):"
           sbcl --disable-debugger \
-          --dynamic-space-size 8192 \
+          --dynamic-space-size ${DYNAMIC_SPACE_SIZE_MB} \
           --load ~/quicklisp/setup.lisp \
           --eval '(ql:register-local-projects)' \
           --eval '(ql:quickload :lisp-magick-wand/test)' \
