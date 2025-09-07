@@ -33,3 +33,29 @@
                         100 100))
     (is (uiop:file-exists-p p))
     (is (> (file-size-in-octets p) 0))))
+
+(cffi:defcfun "MagickReadImageBlob" :boolean
+  (wand :pointer)
+  (blob :pointer)
+  (length :int))
+
+(defun get-input-byte-vector ()
+  (alexandria:read-file-into-byte-vector
+   (asdf:system-relative-pathname
+    "lisp-magick-wand"
+    "test/mortenhannemose.png")))
+
+(defun slow ()
+  (magick:with-magick-wand (wand)
+    (let ((bytes (get-input-byte-vector)))
+      (magick:read-image-blob wand bytes))))
+
+(defun fast ()
+  (magick:with-magick-wand (wand)
+    (let ((bytes (get-input-byte-vector)))
+      (cffi:with-pointer-to-vector-data (ptr bytes)
+        (magickreadimageblob wand ptr (length bytes))))))
+
+(test read-image-blob
+  (finishes (slow))
+  (finishes (fast)))
