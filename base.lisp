@@ -74,11 +74,28 @@
       (%add-outer-wrapper
        #'(lambda (code)
            `(cffi:with-foreign-object (,g ',real-type)
-             ,code)))
+              ,code)))
       (%add-result-value `(cffi:mem-ref ,g ',real-type))
       (%add-defc-param (list name :pointer))
       (%add-inv-param g))))
 
+#+sbcl
+(defmethod %special-argument-handling (name (key (eql :dynarray)) &rest rest)
+  (declare (ignorable rest))
+  (let ((g-len (or (%get-state :dynarray-length name)
+                   (setf (%get-state :dynarray-length name) (gensym))))
+        (g-mem (gensym)))
+    (%add-outer-wrapper
+     #'(lambda (code)
+         `(let ((,g-len (length ,name)))
+            (unwind-protect
+                 (cffi:with-pointer-to-vector-data (,g-mem (coerce ,name 'vector))
+                   ,code)))))
+    (%add-defc-param (list name :pointer))
+    (%add-lisp-param name)
+    (%add-inv-param g-mem)))
+
+#-sbcl
 (defmethod %special-argument-handling (name (key (eql :dynarray)) &rest args)
   (destructuring-bind (el-type) args
     (let ((g-len (or (%get-state :dynarray-length name)
@@ -91,35 +108,35 @@
            `(let ((,g-len (length ,name))
                   (,g-vals nil) (,g-params nil)
                   (,g-mem (cffi:null-pointer)))
-             (unwind-protect
-                  (progn
-                    (etypecase ,name
-                      (null nil)
-                      (vector
-                       (setf ,g-mem (cffi:foreign-alloc ',real-type :count ,g-len))
-                       (do ((,g-idx 0 (1+ ,g-idx)))
-                           ((>= ,g-idx ,g-len))
-                         (multiple-value-bind (,g-fv ,g-p)
-                             (cffi:convert-to-foreign (aref ,name ,g-idx) ',el-type)
-                           (setf (cffi:mem-aref ,g-mem ',real-type ,g-idx) ,g-fv)
-                           (push ,g-fv ,g-vals)
-                           (push ,g-p ,g-params))))
-                      (list
-                       (setf ,g-mem (cffi:foreign-alloc ',real-type :count ,g-len))
-                       (do ((,g-idx 0 (1+ ,g-idx))
-                            (,g-i ,name (cdr ,g-i)))
-                           ((>= ,g-idx ,g-len))
-                         (multiple-value-bind (,g-fv ,g-p)
-                             (cffi:convert-to-foreign (car ,g-i) ',el-type)
-                           (setf (cffi:mem-aref ,g-mem ',real-type ,g-idx) ,g-fv)
-                           (push ,g-fv ,g-vals)
-                           (push ,g-p ,g-params)))))
-                    ,code)
-               (unless (cffi:null-pointer-p ,g-mem)
-                 (mapc #'(lambda (,g-fv ,g-p)
-                           (cffi:free-converted-object ,g-fv ',el-type ,g-p))
-                       ,g-vals ,g-params)
-                 (cffi:foreign-free ,g-mem))))))
+              (unwind-protect
+                   (progn
+                     (etypecase ,name
+                       (null nil)
+                       (vector
+                        (setf ,g-mem (cffi:foreign-alloc ',real-type :count ,g-len))
+                        (do ((,g-idx 0 (1+ ,g-idx)))
+                            ((>= ,g-idx ,g-len))
+                          (multiple-value-bind (,g-fv ,g-p)
+                              (cffi:convert-to-foreign (aref ,name ,g-idx) ',el-type)
+                            (setf (cffi:mem-aref ,g-mem ',real-type ,g-idx) ,g-fv)
+                            (push ,g-fv ,g-vals)
+                            (push ,g-p ,g-params))))
+                       (list
+                        (setf ,g-mem (cffi:foreign-alloc ',real-type :count ,g-len))
+                        (do ((,g-idx 0 (1+ ,g-idx))
+                             (,g-i ,name (cdr ,g-i)))
+                            ((>= ,g-idx ,g-len))
+                          (multiple-value-bind (,g-fv ,g-p)
+                              (cffi:convert-to-foreign (car ,g-i) ',el-type)
+                            (setf (cffi:mem-aref ,g-mem ',real-type ,g-idx) ,g-fv)
+                            (push ,g-fv ,g-vals)
+                            (push ,g-p ,g-params)))))
+                     ,code)
+                (unless (cffi:null-pointer-p ,g-mem)
+                  (mapc #'(lambda (,g-fv ,g-p)
+                            (cffi:free-converted-object ,g-fv ',el-type ,g-p))
+                        ,g-vals ,g-params)
+                  (cffi:foreign-free ,g-mem))))))
       (%add-defc-param (list name :pointer))
       (%add-lisp-param name)
       (%add-inv-param g-mem))))
@@ -128,6 +145,7 @@
   (destructuring-bind (type seq-name &key expr) args
     (let ((g-len (or (%get-state :dynarray-length seq-name)
                      (setf (%get-state :dynarray-length seq-name) (gensym)))))
+      (format t "length ~a~%" g-len)
       (%add-defc-param (list name type))
       (%add-inv-param (if expr
                           (subst g-len :l expr)
@@ -139,7 +157,7 @@
       (%add-outer-wrapper
        #'(lambda (code)
            `(cffi:with-foreign-object (,g ',type)
-             ,code)))
+              ,code)))
       (%add-defc-param (list name :pointer))
       (%add-inv-param g)
       (setf (%get-state :dynarray-ret-length :name) g
@@ -159,24 +177,24 @@
            `(let ((,name (if (cffi:null-pointer-p ,name)
                              ,err-val
                              ,(cond
-                               ((eql seq-type 'list)
-                                `(loop for ,g-i from 0 below (cffi:mem-ref ,g-len ',len-type)
-                                       collecting (cffi:mem-aref ,name ',type ,g-i)
-                                       finally (relinquish-memory ,name)))
-                               ((or (eql seq-type 'vector)
-                                    (and (listp seq-type)
-                                         (eql (first seq-type) 'vector)))
-                                (let ((eltype (if (listp seq-type) (second seq-type) t))
-                                      (g-l (gensym))
-                                      (g-seq (gensym)))
-                                  `(let* ((,g-l (cffi:mem-ref ,g-len ',len-type))
-                                          (,g-seq (make-array ,g-l :element-type ',eltype)))
-                                    (dotimes (,g-i ,g-l)
-                                      (setf (aref ,g-seq ,g-i) (cffi:mem-aref ,name ',type ,g-i)))
-                                    (relinquish-memory ,name)
-                                    ,g-seq)))
-                               (t (error "unsupported sequence type: ~s" seq-type))))))
-             ,code)))
+                                ((eql seq-type 'list)
+                                 `(loop for ,g-i from 0 below (cffi:mem-ref ,g-len ',len-type)
+                                        collecting (cffi:mem-aref ,name ',type ,g-i)
+                                        finally (relinquish-memory ,name)))
+                                ((or (eql seq-type 'vector)
+                                     (and (listp seq-type)
+                                          (eql (first seq-type) 'vector)))
+                                 (let ((eltype (if (listp seq-type) (second seq-type) t))
+                                       (g-l (gensym))
+                                       (g-seq (gensym)))
+                                   `(let* ((,g-l (cffi:mem-ref ,g-len ',len-type))
+                                           (,g-seq (make-array ,g-l :element-type ',eltype)))
+                                      (dotimes (,g-i ,g-l)
+                                        (setf (aref ,g-seq ,g-i) (cffi:mem-aref ,name ',type ,g-i)))
+                                      (relinquish-memory ,name)
+                                      ,g-seq)))
+                                (t (error "unsupported sequence type: ~s" seq-type))))))
+              ,code)))
       (%set-return-type :pointer)
       (setf (%get-state :dynarray-ret-length :err-val) err-val))))
 
@@ -195,12 +213,12 @@
            `(let ((,name (if (cffi:null-pointer-p ,name)
                              ,err-val
                              (loop for ,g-i from 0
-                                  ,@(if len
-                                        `(below ,len)
-                                        `(until (cffi:null-pointer-p (cffi:mem-aref ,name :pointer ,g-i))))
-                                collecting (cffi:mem-aref ,name ',type ,g-i)
-                                  ,@(if free-array-p
-                                        `(finally (relinquish-memory ,name)))))))
+                                   ,@(if len
+                                         `(below ,len)
+                                         `(until (cffi:null-pointer-p (cffi:mem-aref ,name :pointer ,g-i))))
+                                   collecting (cffi:mem-aref ,name ',type ,g-i)
+                                   ,@(if free-array-p
+                                         `(finally (relinquish-memory ,name)))))))
               ,code)))
       (%set-return-type :pointer)
       (setf (%get-state :ret-array :err-val) err-val))))
@@ -242,18 +260,18 @@
       (setf internal-name (%internal-fn-name lisp-name)))
 
     `(progn
-      (cffi:defcfun (,c-name ,(or internal-name lisp-name)) ,*ret-type* ,@(reverse *defc-params*))
-      ,@ (unless simple-p
-           `((defun ,lisp-name ,(reverse *lisp-params*)
-               ,(funcall *outer-wrap-code*
-                         `(let ((,retval (,internal-name ,@(reverse *inv-params*))))
-                           ,(funcall *inner-wrap-code*
-                                     `(progn
-                                       ,@ (when check-error
-                                            `((when ,(%error-condition retval (if (consp ret-type) (car ret-type) ret-type))
-                                                ,(%error-signalling-code check-error error-type))))
-                                       (values ,@(reverse *result-values*)))))))))
-      ,@ (when export-p `((export ',lisp-name))))))
+       (cffi:defcfun (,c-name ,(or internal-name lisp-name)) ,*ret-type* ,@(reverse *defc-params*))
+       ,@ (unless simple-p
+            `((defun ,lisp-name ,(reverse *lisp-params*)
+                ,(funcall *outer-wrap-code*
+                          `(let ((,retval (,internal-name ,@(reverse *inv-params*))))
+                             ,(funcall *inner-wrap-code*
+                                       `(progn
+                                          ,@ (when check-error
+                                               `((when ,(%error-condition retval (if (consp ret-type) (car ret-type) ret-type))
+                                                   ,(%error-signalling-code check-error error-type))))
+                                          (values ,@(reverse *result-values*)))))))))
+       ,@ (when export-p `((export ',lisp-name))))))
 
 
 (cffi:define-foreign-library lib-magick-wand
