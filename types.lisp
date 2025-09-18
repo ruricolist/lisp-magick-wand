@@ -35,6 +35,8 @@
 
 ;; Quantum
 
+#+lisp-magick-wand:no-hdri
+(progn
 (declaim (inline byte->quantum quantum->byte))
 
 #+lisp-magick-wand:quantum-8
@@ -68,6 +70,63 @@ but cffi doesn't support long long on your lisp implementation.")
 #-(or lisp-magick-wand:quantum-8 lisp-magick-wand:quantum-16
       lisp-magick-wand:quantum-32 lisp-magick-wand:quantum-64)
 (error "quantum size feature not defined")
+)
+
+;;250918 - MAGICKCORE_HDRI_SUPPORT
+;; sizeof(Quantum) = (cffi:foreign-type-size :float)
+#-lisp-magick-wand:no-hdri
+(progn
+(defmagicktype quantum :float)
+
+#+lisp-magick-wand:quantum-8
+(progn
+  (defun byte->quantum (b) b)
+  (defun quantum->byte (b)
+    (cond ((or (float-features:float-nan-p b) (< b 0.0))
+	   0)
+	  ((>= quantum 255.0)
+	   255)
+	  (t (values (truncate (+ quantum 0.5)))))))
+
+
+#+lisp-magick-wand:quantum-16
+(progn
+  (defun byte->quantum (b) (* b 257.0))
+  (defun quantum->byte  (b)
+    (cond ((or (float-features:float-nan-p b) (< b 0.0))
+	   0)
+	  ((>= (/ b 257.0) 255.0)
+	   255)
+	  (t (values (truncate (+ (/ b 257.0) 0.5)))))))
+
+#+lisp-magick-wand:quantum-32
+(progn
+  (defun byte->quantum (b) (* b 16843009.0))
+  (defun quantum->byte (b)
+    (cond ((or (float-features:float-nan-p b) (< b 0.0))
+	   0)
+	  ((>= (/ b 16843009.0) 255.0)
+	   255)
+	  (t (values (truncate (+ (/ b 16843009.0) 0.5)))))))
+
+#+(and lisp-magick-wand:quantum-64 cffi-features:no-long-long)
+(error "your version of imagemagick uses a quantum size of 64bit,
+but cffi doesn't support long long on your lisp implementation.")
+
+#+(and lisp-magick-wand:quantum-64 (not cffi-features:no-long-long))
+(progn
+  (defun byte->quantum (b) (* b 72340172838076673.0))
+  (defun quantum->byte (b)
+    (cond ((or (float-features:float-nan-p b) (< b 0.0))
+	   0)
+	  ((>= (/ b 72340172838076673.0) 255.0)
+	   255)
+	  (t (values (truncate (+ (/ b 72340172838076673.0) 0.5)))))))
+
+#-(or lisp-magick-wand:quantum-8 lisp-magick-wand:quantum-16
+      lisp-magick-wand:quantum-32 lisp-magick-wand:quantum-64)
+(error "quantum size feature not defined")
+)
 
 (defmagicktrans cffi:expand-to-foreign (value (type quantum))     value)
 (defmagicktrans cffi:expand-from-foreign (value (type quantum))   value)

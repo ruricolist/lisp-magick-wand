@@ -322,6 +322,9 @@
   (t (:default "libWand")))
 (cffi:use-foreign-library lib-magick-wand)
 
+(unless (search "HDRI.so" (namestring (cffi:foreign-library-pathname (cffi::get-foreign-library  'lib-magick-wand))))
+  (pushnew 'no-hdri *features*))
+
 (defun type-name-to-class-name (name)
   (intern (concatenate 'string (symbol-name name) "-TYPE-CLASS")
           (symbol-package name)))
