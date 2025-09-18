@@ -35,6 +35,8 @@
 
 ;; Quantum
 
+#+no-hdri
+(progn
 (declaim (inline byte->quantum quantum->byte))
 
 #+lisp-magick-wand:quantum-8
@@ -68,6 +70,26 @@ but cffi doesn't support long long on your lisp implementation.")
 #-(or lisp-magick-wand:quantum-8 lisp-magick-wand:quantum-16
       lisp-magick-wand:quantum-32 lisp-magick-wand:quantum-64)
 (error "quantum size feature not defined")
+)
+
+;;250918 - MAGICKCORE_HDRI_SUPPORT
+;; sizeof(Quantum) = (cffi:foreign-type-size :float)
+#-no-hdri
+(progn
+(defmagicktype quantum :float)
+
+#+lisp-magick-wand:quantum-16
+(progn
+  (defun byte->quantum (b) (* b 257.0))
+  (defun quantum->byte  (b)
+    (cond ((or (float-features:float-nan-p b) (< b 0.0))
+	   0)
+	  ((>= (/ b 257.0) 255.0)
+	   255)
+	  (t (+ (/ b 257.0) 0.5)))))
+#-lisp-magick-wand:quantum-16
+(error "FIXME")
+)
 
 (defmagicktrans cffi:expand-to-foreign (value (type quantum))     value)
 (defmagicktrans cffi:expand-from-foreign (value (type quantum))   value)
