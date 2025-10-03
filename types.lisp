@@ -188,6 +188,16 @@ but cffi doesn't support long long on your lisp implementation.")
 (defmethod %error-signalling-code (wand (type (eql 'pixel-wand)))
   `(signal-pixel-wand-error ,wand))
 
+;; PixelIterator
+
+(defmagicktype pixel-iterator :pointer)
+(defmagicktrans cffi:expand-to-foreign (value (type pixel-iterator))      value)
+(defmagicktrans cffi:expand-from-foreign (value (type pixel-iterator))    value)
+(defmethod %error-condition (value (type (eql 'pixel-iterator)))
+  `(cffi:null-pointer-p ,value))
+(defmethod %error-signalling-code (wand (type (eql 'pixel-iterator)))
+  `(signal-pixel-iterator-error ,wand))
+
 
 ;; DrawingWand
 

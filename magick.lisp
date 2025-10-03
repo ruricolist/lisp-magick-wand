@@ -20,6 +20,10 @@
   (multiple-value-bind (msg type) (pixel-get-exception wand)
     (error 'magick-wand-error :message msg :type type)))
 
+(defun signal-pixel-iterator-error (iter) ;fixme rename wand->iter
+  (multiple-value-bind (msg type) (pixel-get-iterator-exception iter)
+    (error 'magick-wand-error :message msg :type type)))
+
 (defun signal-drawing-wand-error (wand)
   (multiple-value-bind (msg type) (draw-get-exception wand)
     (error 'magick-wand-error :message msg :type type)))
@@ -27,10 +31,12 @@
 
 (defmagickfun "MagickGetException" magick-string/free ((wand magick-wand)  (exception (:out exception-type))))
 (defmagickfun "PixelGetException"  magick-string/free ((wand pixel-wand)   (exception (:out exception-type))))
+(defmagickfun "PixelGetIteratorException"  magick-string/free ((iter pixel-iterator)   (exception (:out exception-type))))
 (defmagickfun "DrawGetException"   magick-string/free ((wand drawing-wand) (exception (:out exception-type))))
 
 (defmagickfun "MagickClearException" :boolean ((wand magick-wand)))
 (defmagickfun "PixelClearException"  :boolean ((wand pixel-wand)))
+(defmagickfun "PixelClearIteratorException"  :boolean ((wand pixel-iterator)))
 (defmagickfun "DrawClearException"   :boolean ((wand drawing-wand)))
 
 
@@ -1072,6 +1078,27 @@
 (defmagickfun "PixelGetIndex" quantum ((wand pixel-wand)))
 (defmagickfun "PixelSetIndex" :void   ((wand pixel-wand) (index quantum)))
 
+;;; Pixel Iterators
+
+(defmagickfun "NewPixelIterator"     pixel-iterator  ((wand magick-wand)))
+(defmagickfun "DestroyPixelIterator" pixel-iterator ((iter pixel-iterator)))
+(defmagickfun "isPixelIterator"      :boolean       ((iter pixel-iterator)))
+(defmagickfun "ClonePixelIterator"   pixel-iterator ((iter pixel-iterator)))
+(defmagickfun "NewPixelRegionIterator"   pixel-iterator ((iter pixel-iterator) (width :ulong) (height :ulong) (x :long) (y :long)))
+
+;;(defmagickfun "PixelClearIteratorException"  :boolean ((iter pixel-iterator)))
+(defmagickfun "PixelSetIteratorRow"  :boolean ((iter pixel-iterator) (row :ulong)))
+(defmagickfun "PixelSyncIterator"  :boolean ((iter pixel-iterator)))
+(defmagickfun "PixelGetIteratorRow" :ulong ((iter pixel-iterator)))
+
+(defmagickfun "PixelGetCurrentIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+(defmagickfun "PixelGetNextIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+(defmagickfun "PixelPreviousIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+
+(defmagickfun "ClearPixelIterator" :void ((iter pixel-iterator)))
+(defmagickfun "PixelResetIterator" :void ((iter pixel-iterator)))
+(defmagickfun "PixelSetFirstIteratorRow" :void ((iter pixel-iterator)))
+(defmagickfun "PixelSetLastIteratorRow" :void ((iter pixel-iterator)))
 
 ;;; Drawing Wands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -65,6 +65,74 @@
       (destroy-pixel-wand ,var))))
 
 
+;;; Pixel Iterator
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; cannot be a macrolet within with-pixel-iterator
+(defmacro %check-pixel-iter-error (var)
+  `(when ,(%error-condition var 'pixel-iterator)
+     ,(%error-signalling-code var 'pixel-iterator)))
+
+(defmacro with-pixel-iterator ((var wand) &body body)
+  (let ((wand-var (gensym "W")))
+    `(let* ((,wand-var ,wand)
+	    (,var (new-pixel-iterator ,wand-var)))
+       ,(macroexpand-1 `(%check-pixel-iter-error ,wand-var))
+       (unwind-protect
+	    (progn
+	      ,@body)
+	 (destroy-pixel-iterator ,var)))))
+
+;; pattern from alexandria bind
+(defmacro with-pixel-iterator* (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-pixel-iterator ,(car bindings)
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
+
+(defun map-pixels (function magick-wand &rest more-magick-wands)
+  "Repeatedly call FUNCTION on `pixel-wands' corresponding to each pixel
+position of the supplied `image-wand's. The image-wands are assumed to
+be of the same dimensions."
+  (let* ((image-wands (cons magick-wand more-magick-wands)) (n (length image-wands))
+	 (iters (make-list n)) iter (pws-list (make-list n)))
+    (unwind-protect
+	 (block outer
+	   (loop for i below n
+		 do (setq iter (setf (elt iters i) (new-pixel-iterator (elt image-wands i))))
+		 if (cffi:null-pointer-p iter)
+		 do (signal-pixel-iterator-error (elt image-wands i)))
+	   (loop for y below (get-image-height (car image-wands))
+		 with width
+		 do (loop for i below n
+			  do (multiple-value-bind (pixels-array width2)
+				 (pixel-get-next-iterator-row (elt iters i))
+			       (if (cffi:null-pointer-p pixels-array)
+				   (return-from outer))
+			       (if width
+				   (with-simple-restart (cont "Cont")
+				     (assert (= width width2)))
+				   (setq width width2))
+			       (setf (elt pws-list i) pixels-array)))
+		 do (loop for x below width
+			  for args = (mapcar (lambda (a)
+					       (cffi:mem-aref a 'pixel-wand x))
+					     pws-list)
+			  do (let ((x x) (y y))
+			       (declare (special x y))
+			       (apply function args)))))
+      (loop for i below n
+	    when (and (setq iter (elt iters i))
+		      (not (cffi:null-pointer-p iter)))
+	    do (destroy-pixel-iterator iter)))))
+
+
 ;;; Drawing Wand Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
