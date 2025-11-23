@@ -142,6 +142,12 @@ be of the same dimensions."
          (progn ,@body)
       (destroy-drawing-wand ,var))))
 
+(defmacro with-cloned-drawing-wand ((var orig-wand) &body body)
+  `(let ((,var (clone-drawing-wand ,orig-wand)))
+    (unwind-protect
+         (progn ,@body)
+      (destroy-drawing-wand ,var))))
+
 
 ;;; Magick Wand Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -204,6 +210,12 @@ libjpeg (as a cons):
 
 (defmacro give-wand (var)
   `(prog1 ,var (setf ,var nil)))
+
+(defmacro with-cloned-magick-wand ((var orig-wand) &body body)
+  `(let ((,var (clone-magick-wand ,orig-wand)))
+    (unwind-protect
+         (progn ,@body)
+      (destroy-magick-wand ,var))))
 
 ;;; Manipulating pixel data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

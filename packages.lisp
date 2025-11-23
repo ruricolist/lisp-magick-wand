@@ -6,4 +6,6 @@
            :with-pixel-wand :with-drawing-wand :with-magick-wand :give-wand
            :with-pixel-data :pixel :get-pixel :set-pixel
            :with-pixel-iterator :with-pixel-iterator* :map-pixels
-           :magick-wand-error))
+           :magick-wand-error
+           :with-cloned-magick-wand
+           :with-cloned-drawing-wand))
