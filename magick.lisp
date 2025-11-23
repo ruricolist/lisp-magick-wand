@@ -1158,7 +1158,11 @@
 (defmagickfun "DrawSetTextAlignment"    :void ((wand drawing-wand) (align align-type)))
 (defmagickfun "DrawSetTextAntialias"    :void ((wand drawing-wand) (antialias :boolean)))
 (defmagickfun "DrawSetTextDecoration"   :void ((wand drawing-wand) (deco decoration-type)))
+(defmagickfun "DrawSetTextDirection "   :void ((wand drawing-wand) (deco direction-type)))
 (defmagickfun "DrawSetTextEncoding"     :void ((wand drawing-wand) (encoding magick-string)))
+(defmagickfun "DrawSetTextKerning"      :void ((wand drawing-wand) (kerneing magick-double)))
+(defmagickfun "DrawSetTextInterlineSpacing"      :void ((wand drawing-wand) (spacing magick-double)))
+(defmagickfun "DrawSetTextInterwordSpacing"      :void ((wand drawing-wand) (spacing magick-double)))
 (defmagickfun "DrawSetViewbox"          :void ((wand drawing-wand) (x1 :ulong) (y1 :ulong) (x2 :ulong) (y2 :ulong)))
 
 (defmagickfun "DrawGetFillColor"        :void ((dwand drawing-wand) (pwand pixel-wand)))
@@ -1168,6 +1172,9 @@
 (defmagickfun "DrawSetFillColor"        :void ((dwand drawing-wand) (pwand pixel-wand)))
 (defmagickfun "DrawSetStrokeColor"      :void ((dwand drawing-wand) (pwand pixel-wand)))
 (defmagickfun "DrawSetTextUnderColor"   :void ((dwand drawing-wand) (pwand pixel-wand)))
+
+(defmagickfun "DrawSetVectorGraphics"   :void ((dwand drawing-wand) (xml magick-string)))
+(defmagickfun "DrawResetVectorGraphics" :void ((dwand drawing-wand)))
 
 (defmagickfun "DrawSetFont"       :boolean ((dwand drawing-wand) (font-name magick-string)))
 (defmagickfun "DrawSetFontFamily" :boolean ((dwand drawing-wand) (font-family magick-string)))
@@ -1248,3 +1255,10 @@
 (defmagickfun "DrawPathMoveToRelative" :void
   ((dwand drawing-wand) (x magick-double) (y magick-double)))
 (defmagickfun "DrawPathStart" :void ((dwand drawing-wand)))
+
+(defmagickfun "DrawSkewX" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawSkewY" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawRotate" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawTranslate" :void
+  ((dwand drawing-wand) (x magick-double) (y magick-double )))
+(defmagickfun "DrawScale" :void  ((dwand drawing-wand) (x magick-double) (y magick-double)))

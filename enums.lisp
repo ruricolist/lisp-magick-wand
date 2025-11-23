@@ -75,6 +75,7 @@
 (define-enum-from-options "Align" align-type)
 (define-enum-from-options "ClipPath" clip-path-units)
 (define-enum-from-options "Decoration" decoration-type)
+(define-enum-from-options "Direction" direction-type)
 (define-enum-from-options "FillRule" fill-rule)
 (define-enum-from-options "LineCap" line-cap)
 (define-enum-from-options "LineJoin" line-join)
