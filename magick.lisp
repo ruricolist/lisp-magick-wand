@@ -462,8 +462,18 @@
   ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
    (map magick-string) (storage storage-type) (pixels :pointer))
   :check-error wand)
+;;; not deprecated
+(defmagickfun "MagickExportImagePixels" :boolean
+  ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
+   (map magick-string) (storage storage-type) (pixels :pointer))
+  :check-error wand)
 ;; deprecated
 (defmagickfun "MagickSetImagePixels" :boolean
+  ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
+   (map magick-string) (storage storage-type) (pixels :pointer))
+  :check-error wand)
+;;; not deprecated
+(defmagickfun "MagickImportImagePixels" :boolean
   ((wand magick-wand) (x :long) (y :long) (columns :ulong) (rows :ulong)
    (map magick-string) (storage storage-type) (pixels :pointer))
   :check-error wand)

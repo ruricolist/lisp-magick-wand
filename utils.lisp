@@ -154,11 +154,11 @@ libjpeg (as a cons):
             (,g-pd (cffi:foreign-alloc :uchar :count (* ,g-w ,g-h 4))))
       (unwind-protect
            (progn
-             (get-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)
+             (export-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)
              (prog1
                  (let ((,var (make-instance 'pixel-data :data ,g-pd :width ,g-w :height ,g-h)))
                    ,@body)
-               (set-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)))
+               (import-image-pixels ,g-wand 0 0 ,g-w ,g-h "RGBA" :char ,g-pd)))
         (cffi:foreign-free ,g-pd)))))
 
 (defun pixel (pd x y)
