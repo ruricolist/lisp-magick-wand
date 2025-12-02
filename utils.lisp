@@ -64,6 +64,17 @@
            ,@body)
       (destroy-pixel-wand ,var))))
 
+(defmacro with-pixel-wands (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-pixel-wand (,@(car bindings))
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
 
 ;;; Pixel Iterator
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -148,6 +159,23 @@ be of the same dimensions."
          (progn ,@body)
       (destroy-drawing-wand ,var))))
 
+(defmacro with-drawing-wands (vars &body body)
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-drawing-wand (,(car bindings))
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+      (bind vars body)))
+
+(defmacro with-cloned-drawing-wands (var-bindings &body body)
+  "VAR-BINDINGS is a list of (VAR ORIG-VAR)"
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-cloned-drawing-wand ,(car bindings)
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+      (bind var-bindings body)))
+
 
 ;;; Magick Wand Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -216,6 +244,26 @@ libjpeg (as a cons):
     (unwind-protect
          (progn ,@body)
       (destroy-magick-wand ,var))))
+
+(defmacro with-magick-wands (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-magick-wand (,@(car bindings))
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
+(defmacro with-cloned-magick-wands (var-bindings &body body)
+  "VAR-BINDINGS is a list of (VAR ORIG-VAR)"
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-cloned-magick-wand ,(car bindings)
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+    (bind var-bindings body)))
 
 ;;; Manipulating pixel data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
