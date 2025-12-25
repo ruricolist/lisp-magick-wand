@@ -208,3 +208,6 @@ but cffi doesn't support long long on your lisp implementation.")
   `(cffi:null-pointer-p ,value))
 (defmethod %error-signalling-code (wand (type (eql 'drawing-wand)))
   `(signal-drawing-wand-error ,wand))
+
+;; Image
+(defmagicktype magick-image :pointer)

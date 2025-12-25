@@ -1262,3 +1262,9 @@
 (defmagickfun "DrawTranslate" :void
   ((dwand drawing-wand) (x magick-double) (y magick-double )))
 (defmagickfun "DrawScale" :void  ((dwand drawing-wand) (x magick-double) (y magick-double)))
+
+
+;; Image Operations
+
+(defmagickfun "GetImageFromMagickWand" magick-image
+  ((wand magick-wand)))
