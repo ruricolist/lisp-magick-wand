@@ -211,3 +211,10 @@ but cffi doesn't support long long on your lisp implementation.")
 
 ;; Image
 (defmagicktype magick-image :pointer)
+
+;; Points
+(cffi:defcstruct magick-point-info
+  (x :double)
+  (y :double))
+(cffi:defctype magick-point-info (:struct magick-point-info))
+(export '(magick-point-info x y) :lisp-magick-wand)

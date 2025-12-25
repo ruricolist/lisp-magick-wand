@@ -1205,6 +1205,11 @@
                                           (x2 magick-double) (y2 magick-double)
                                           (rx magick-double) (ry magick-double)))
 
+(defmagickfun "DrawPolygon" :void ((dwand drawing-wand)
+				   (number-coordinates :unsigned-long)
+				   (coordinates
+				    (:pointer magick-point-info))))
+
 
 ;; Path operations
 

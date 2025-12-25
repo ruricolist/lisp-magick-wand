@@ -322,3 +322,33 @@ libjpeg (as a cons):
           (cffi:mem-ref data :uchar (+ i 1)) g
           (cffi:mem-ref data :uchar (+ i 2)) b
           (cffi:mem-ref data :uchar (+ i 3)) a)))
+
+;; Drawing helpers
+
+(defmacro with-pointer-to-point-info-data ((out polygon-data &key length size-var) &body body)
+  "Bind OUT to a foreign allocated array of PointInfo objects
+when evaluating BODY.  POLYGON-DATA is a list of points of the
+form ((x1 y1) (x2 y) ...).  If LENGTH is supplied it should be an
+integer and only the first LENGTH elements of POLYGON-DATA are used to
+allocate the array.  If SIZE-VAR is supplied it should be a symbol. It
+is bound to the number of PointInfo objects allocated in the array"
+  (let ((len-var (or size-var (gensym "LEN-")))
+	(data-var (gensym "POINT-DATA-")))
+    `(let* ((,data-var ,polygon-data)
+	    (,len-var (or ,length (length ,data-var))))
+       (cffi:with-foreign-object (,out 'magick-point-info ,len-var)
+	 (loop for (x y) in ,data-var
+	       for i from 0 below ,len-var
+	       do (setf (cffi:foreign-slot-value
+			 (cffi:mem-aptr ,out 'magick-point-info i)
+			 'magick-point-info
+			 'x)
+			(coerce x 'double-float)
+			(cffi:foreign-slot-value
+			 (cffi:mem-aptr ,out 'magick-point-info i)
+			 'magick-point-info
+			 'y)
+			(coerce y 'double-float)))
+	 ,@body))))
+
+(export 'with-pointer-to-point-info-data 'lisp-magick-wand)
