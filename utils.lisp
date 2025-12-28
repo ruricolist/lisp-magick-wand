@@ -352,3 +352,18 @@ is bound to the number of PointInfo objects allocated in the array"
 	 ,@body))))
 
 (export 'with-pointer-to-point-info-data 'lisp-magick-wand)
+
+
+;; helper for the `opacity' pixelwand parameter to
+;; MagickColorizeImage. To work around the API gotcha: the opacity
+;; PixelWand has to set the opacity for red green and blue
+;; channels. using PixelSetAlpha will have no effect.
+
+(defun pixel-wand-set-alpha (pw alpha)
+  (pixel-set-red pw alpha)
+  (pixel-set-green pw alpha)
+  (pixel-set-blue pw alpha)
+  ;;  (pixel-set-alpha pw alpha)
+  )
+
+(export 'pixel-wand-set-alpha 'lisp-magick-wand)
