@@ -218,3 +218,14 @@ but cffi doesn't support long long on your lisp implementation.")
   (y :double))
 (cffi:defctype magick-point-info (:struct magick-point-info))
 (export '(magick-point-info x y) :lisp-magick-wand)
+
+;; Affine Matrix
+(cffi:defcstruct magick-affine-matrix
+  (sx :double)
+  (rx :double)
+  (ry :double)
+  (sy :double)
+  (tx :double)
+  (ty :double))
+(cffi:defctype magick-affine-matrix (:struct magick-affine-matrix))
+(export '(magick-affine-matrix sx rx ry sy tx ty) :lisp-magick-wand)

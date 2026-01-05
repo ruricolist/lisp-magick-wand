@@ -1267,6 +1267,8 @@
 (defmagickfun "DrawTranslate" :void
   ((dwand drawing-wand) (x magick-double) (y magick-double )))
 (defmagickfun "DrawScale" :void  ((dwand drawing-wand) (x magick-double) (y magick-double)))
+(defmagickfun "DrawAffine" :void ((dwand drawing-wand) (affine-matrix (:pointer magick-affine-matrix))))
+(defmagickfun "GetAffineMatrix" :void ((affine-matrix (:pointer magick-affine-matrix))))
 
 
 ;; Image Operations
