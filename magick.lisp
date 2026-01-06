@@ -1122,10 +1122,11 @@
 (defmagickfun "DrawGetVectorGraphics"   magick-string/free ((wand drawing-wand)))
 (defmagickfun "DrawGetClipUnits"        clip-path-units    ((wand drawing-wand)))
 (defmagickfun "DrawGetTextDecoration"   decoration-type    ((wand drawing-wand)))
-(defmagickfun "DrawGetFillAlpha"        :double            ((wand drawing-wand))) ;deprecated
+(defmagickfun "DrawGetOpacity"          :double            ((wand drawing-wand)))
+(defmagickfun "DrawGetFillOpacity"      :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetFontSize"         :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetStrokeDashOffset" :double            ((wand drawing-wand)))
-(defmagickfun "DrawGetStrokeAlpha"      :double            ((wand drawing-wand))) ;deprecated
+(defmagickfun "DrawGetStrokeOpacity"    :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetStrokeWidth"      :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetClipRule"         fill-rule          ((wand drawing-wand)))
 (defmagickfun "DrawGetFillRule"         fill-rule          ((wand drawing-wand)))
@@ -1141,7 +1142,7 @@
 
 (defmagickfun "DrawSetClipRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetClipUnits"        :void ((wand drawing-wand) (units clip-path-units)))
-(defmagickfun "DrawSetFillAlpha"        :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
+(defmagickfun "DrawSetFillOpacity"        :void ((wand drawing-wand) (alpha magick-double)))
 (defmagickfun "DrawSetFillRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetFontSize"         :void ((wand drawing-wand) (size magick-double)))
 (defmagickfun "DrawSetFontStretch"      :void ((wand drawing-wand) (stretch stretch-type)))
@@ -1153,7 +1154,7 @@
 (defmagickfun "DrawSetStrokeLineCap"    :void ((wand drawing-wand) (cap line-cap)))
 (defmagickfun "DrawSetStrokeLineJoin"   :void ((wand drawing-wand) (join line-join)))
 (defmagickfun "DrawSetStrokeMiterLimit" :void ((wand drawing-wand) (limit :ulong)))
-(defmagickfun "DrawSetStrokeAlpha"      :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
+(defmagickfun "DrawSetStrokeOpacity"     :void ((wand drawing-wand) (alpha magick-double)))
 (defmagickfun "DrawSetStrokeWidth"      :void ((wand drawing-wand) (width magick-double)))
 (defmagickfun "DrawSetTextAlignment"    :void ((wand drawing-wand) (align align-type)))
 (defmagickfun "DrawSetTextAntialias"    :void ((wand drawing-wand) (antialias :boolean)))
