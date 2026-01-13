@@ -571,6 +571,9 @@
 (defmagickfun "MagickClipPathImage" :boolean
   ((wand magick-wand) (path-name magick-string) (inside :boolean))
   :check-error wand)
+(defmagickfun "MagickClutImage" :boolean
+  ((wand magick-wand) (clut-wand magick-wand) (method pixel-interpolate-method))
+  :check-error wand)
 ;; deprecated
 (defmagickfun "MagickColorFloodfillImage" :boolean
   ((wand magick-wand) (fill pixel-wand) (fuzz magick-double)
