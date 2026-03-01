@@ -20,6 +20,10 @@
   (multiple-value-bind (msg type) (pixel-get-exception wand)
     (error 'magick-wand-error :message msg :type type)))
 
+(defun signal-pixel-iterator-error (iter) ;fixme rename wand->iter
+  (multiple-value-bind (msg type) (pixel-get-iterator-exception iter)
+    (error 'magick-wand-error :message msg :type type)))
+
 (defun signal-drawing-wand-error (wand)
   (multiple-value-bind (msg type) (draw-get-exception wand)
     (error 'magick-wand-error :message msg :type type)))
@@ -27,10 +31,12 @@
 
 (defmagickfun "MagickGetException" magick-string/free ((wand magick-wand)  (exception (:out exception-type))))
 (defmagickfun "PixelGetException"  magick-string/free ((wand pixel-wand)   (exception (:out exception-type))))
+(defmagickfun "PixelGetIteratorException"  magick-string/free ((iter pixel-iterator)   (exception (:out exception-type))))
 (defmagickfun "DrawGetException"   magick-string/free ((wand drawing-wand) (exception (:out exception-type))))
 
 (defmagickfun "MagickClearException" :boolean ((wand magick-wand)))
 (defmagickfun "PixelClearException"  :boolean ((wand pixel-wand)))
+(defmagickfun "PixelClearIteratorException"  :boolean ((wand pixel-iterator)))
 (defmagickfun "DrawClearException"   :boolean ((wand drawing-wand)))
 
 
@@ -565,6 +571,9 @@
 (defmagickfun "MagickClipPathImage" :boolean
   ((wand magick-wand) (path-name magick-string) (inside :boolean))
   :check-error wand)
+(defmagickfun "MagickClutImage" :boolean
+  ((wand magick-wand) (clut-wand magick-wand) (method pixel-interpolate-method))
+  :check-error wand)
 ;; deprecated
 (defmagickfun "MagickColorFloodfillImage" :boolean
   ((wand magick-wand) (fill pixel-wand) (fuzz magick-double)
@@ -1072,6 +1081,27 @@
 (defmagickfun "PixelGetIndex" quantum ((wand pixel-wand)))
 (defmagickfun "PixelSetIndex" :void   ((wand pixel-wand) (index quantum)))
 
+;;; Pixel Iterators
+
+(defmagickfun "NewPixelIterator"     pixel-iterator  ((wand magick-wand)))
+(defmagickfun "DestroyPixelIterator" pixel-iterator ((iter pixel-iterator)))
+(defmagickfun "isPixelIterator"      :boolean       ((iter pixel-iterator)))
+(defmagickfun "ClonePixelIterator"   pixel-iterator ((iter pixel-iterator)))
+(defmagickfun "NewPixelRegionIterator"   pixel-iterator ((iter pixel-iterator) (width :ulong) (height :ulong) (x :long) (y :long)))
+
+;;(defmagickfun "PixelClearIteratorException"  :boolean ((iter pixel-iterator)))
+(defmagickfun "PixelSetIteratorRow"  :boolean ((iter pixel-iterator) (row :ulong)))
+(defmagickfun "PixelSyncIterator"  :boolean ((iter pixel-iterator)))
+(defmagickfun "PixelGetIteratorRow" :ulong ((iter pixel-iterator)))
+
+(defmagickfun "PixelGetCurrentIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+(defmagickfun "PixelGetNextIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+(defmagickfun "PixelPreviousIteratorRow" pixel-wand ((iter pixel-iterator) (row (:out :ulong))))
+
+(defmagickfun "ClearPixelIterator" :void ((iter pixel-iterator)))
+(defmagickfun "PixelResetIterator" :void ((iter pixel-iterator)))
+(defmagickfun "PixelSetFirstIteratorRow" :void ((iter pixel-iterator)))
+(defmagickfun "PixelSetLastIteratorRow" :void ((iter pixel-iterator)))
 
 ;;; Drawing Wands
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1095,10 +1125,11 @@
 (defmagickfun "DrawGetVectorGraphics"   magick-string/free ((wand drawing-wand)))
 (defmagickfun "DrawGetClipUnits"        clip-path-units    ((wand drawing-wand)))
 (defmagickfun "DrawGetTextDecoration"   decoration-type    ((wand drawing-wand)))
-(defmagickfun "DrawGetFillAlpha"        :double            ((wand drawing-wand))) ;deprecated
+(defmagickfun "DrawGetOpacity"          :double            ((wand drawing-wand)))
+(defmagickfun "DrawGetFillOpacity"      :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetFontSize"         :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetStrokeDashOffset" :double            ((wand drawing-wand)))
-(defmagickfun "DrawGetStrokeAlpha"      :double            ((wand drawing-wand))) ;deprecated
+(defmagickfun "DrawGetStrokeOpacity"    :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetStrokeWidth"      :double            ((wand drawing-wand)))
 (defmagickfun "DrawGetClipRule"         fill-rule          ((wand drawing-wand)))
 (defmagickfun "DrawGetFillRule"         fill-rule          ((wand drawing-wand)))
@@ -1114,7 +1145,7 @@
 
 (defmagickfun "DrawSetClipRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetClipUnits"        :void ((wand drawing-wand) (units clip-path-units)))
-(defmagickfun "DrawSetFillAlpha"        :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
+(defmagickfun "DrawSetFillOpacity"        :void ((wand drawing-wand) (alpha magick-double)))
 (defmagickfun "DrawSetFillRule"         :void ((wand drawing-wand) (rule fill-rule)))
 (defmagickfun "DrawSetFontSize"         :void ((wand drawing-wand) (size magick-double)))
 (defmagickfun "DrawSetFontStretch"      :void ((wand drawing-wand) (stretch stretch-type)))
@@ -1126,12 +1157,16 @@
 (defmagickfun "DrawSetStrokeLineCap"    :void ((wand drawing-wand) (cap line-cap)))
 (defmagickfun "DrawSetStrokeLineJoin"   :void ((wand drawing-wand) (join line-join)))
 (defmagickfun "DrawSetStrokeMiterLimit" :void ((wand drawing-wand) (limit :ulong)))
-(defmagickfun "DrawSetStrokeAlpha"      :void ((wand drawing-wand) (alpha magick-double))) ;deprecated
+(defmagickfun "DrawSetStrokeOpacity"     :void ((wand drawing-wand) (alpha magick-double)))
 (defmagickfun "DrawSetStrokeWidth"      :void ((wand drawing-wand) (width magick-double)))
 (defmagickfun "DrawSetTextAlignment"    :void ((wand drawing-wand) (align align-type)))
 (defmagickfun "DrawSetTextAntialias"    :void ((wand drawing-wand) (antialias :boolean)))
 (defmagickfun "DrawSetTextDecoration"   :void ((wand drawing-wand) (deco decoration-type)))
+(defmagickfun "DrawSetTextDirection "   :void ((wand drawing-wand) (deco direction-type)))
 (defmagickfun "DrawSetTextEncoding"     :void ((wand drawing-wand) (encoding magick-string)))
+(defmagickfun "DrawSetTextKerning"      :void ((wand drawing-wand) (kerneing magick-double)))
+(defmagickfun "DrawSetTextInterlineSpacing"      :void ((wand drawing-wand) (spacing magick-double)))
+(defmagickfun "DrawSetTextInterwordSpacing"      :void ((wand drawing-wand) (spacing magick-double)))
 (defmagickfun "DrawSetViewbox"          :void ((wand drawing-wand) (x1 :ulong) (y1 :ulong) (x2 :ulong) (y2 :ulong)))
 
 (defmagickfun "DrawGetFillColor"        :void ((dwand drawing-wand) (pwand pixel-wand)))
@@ -1141,6 +1176,9 @@
 (defmagickfun "DrawSetFillColor"        :void ((dwand drawing-wand) (pwand pixel-wand)))
 (defmagickfun "DrawSetStrokeColor"      :void ((dwand drawing-wand) (pwand pixel-wand)))
 (defmagickfun "DrawSetTextUnderColor"   :void ((dwand drawing-wand) (pwand pixel-wand)))
+
+(defmagickfun "DrawSetVectorGraphics"   :void ((dwand drawing-wand) (xml magick-string)))
+(defmagickfun "DrawResetVectorGraphics" :void ((dwand drawing-wand)))
 
 (defmagickfun "DrawSetFont"       :boolean ((dwand drawing-wand) (font-name magick-string)))
 (defmagickfun "DrawSetFontFamily" :boolean ((dwand drawing-wand) (font-family magick-string)))
@@ -1170,6 +1208,11 @@
 (defmagickfun "DrawRoundRectangle" :void ((dwand drawing-wand) (x1 magick-double) (y1 magick-double)
                                           (x2 magick-double) (y2 magick-double)
                                           (rx magick-double) (ry magick-double)))
+
+(defmagickfun "DrawPolygon" :void ((dwand drawing-wand)
+				   (number-coordinates :unsigned-long)
+				   (coordinates
+				    (:pointer magick-point-info))))
 
 
 ;; Path operations
@@ -1221,3 +1264,18 @@
 (defmagickfun "DrawPathMoveToRelative" :void
   ((dwand drawing-wand) (x magick-double) (y magick-double)))
 (defmagickfun "DrawPathStart" :void ((dwand drawing-wand)))
+
+(defmagickfun "DrawSkewX" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawSkewY" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawRotate" :void ((dwand drawing-wand) (degrees magick-double)))
+(defmagickfun "DrawTranslate" :void
+  ((dwand drawing-wand) (x magick-double) (y magick-double )))
+(defmagickfun "DrawScale" :void  ((dwand drawing-wand) (x magick-double) (y magick-double)))
+(defmagickfun "DrawAffine" :void ((dwand drawing-wand) (affine-matrix (:pointer magick-affine-matrix))))
+(defmagickfun "GetAffineMatrix" :void ((affine-matrix (:pointer magick-affine-matrix))))
+
+
+;; Image Operations
+
+(defmagickfun "GetImageFromMagickWand" magick-image
+  ((wand magick-wand)))

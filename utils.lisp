@@ -64,6 +64,85 @@
            ,@body)
       (destroy-pixel-wand ,var))))
 
+(defmacro with-pixel-wands (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-pixel-wand (,@(car bindings))
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
+
+;;; Pixel Iterator
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; cannot be a macrolet within with-pixel-iterator
+(defmacro %check-pixel-iter-error (var)
+  `(when ,(%error-condition var 'pixel-iterator)
+     ,(%error-signalling-code var 'pixel-iterator)))
+
+(defmacro with-pixel-iterator ((var wand) &body body)
+  (let ((wand-var (gensym "W")))
+    `(let* ((,wand-var ,wand)
+	    (,var (new-pixel-iterator ,wand-var)))
+       ,(macroexpand-1 `(%check-pixel-iter-error ,wand-var))
+       (unwind-protect
+	    (progn
+	      ,@body)
+	 (destroy-pixel-iterator ,var)))))
+
+;; pattern from alexandria bind
+(defmacro with-pixel-iterator* (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-pixel-iterator ,(car bindings)
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
+
+(defun map-pixels (function magick-wand &rest more-magick-wands)
+  "Repeatedly call FUNCTION on `pixel-wands' corresponding to each pixel
+position of the supplied `image-wand's. The image-wands are assumed to
+be of the same dimensions."
+  (let* ((image-wands (cons magick-wand more-magick-wands)) (n (length image-wands))
+	 (iters (make-list n)) iter (pws-list (make-list n)))
+    (unwind-protect
+	 (block outer
+	   (loop for i below n
+		 do (setq iter (setf (elt iters i) (new-pixel-iterator (elt image-wands i))))
+		 if (cffi:null-pointer-p iter)
+		 do (signal-pixel-iterator-error (elt image-wands i)))
+	   (loop for y below (get-image-height (car image-wands))
+		 with width
+		 do (loop for i below n
+			  do (multiple-value-bind (pixels-array width2)
+				 (pixel-get-next-iterator-row (elt iters i))
+			       (if (cffi:null-pointer-p pixels-array)
+				   (return-from outer))
+			       (if width
+				   (with-simple-restart (cont "Cont")
+				     (assert (= width width2)))
+				   (setq width width2))
+			       (setf (elt pws-list i) pixels-array)))
+		 do (loop for x below width
+			  for args = (mapcar (lambda (a)
+					       (cffi:mem-aref a 'pixel-wand x))
+					     pws-list)
+			  do (let ((x x) (y y))
+			       (declare (special x y))
+			       (apply function args)))))
+      (loop for i below n
+	    when (and (setq iter (elt iters i))
+		      (not (cffi:null-pointer-p iter)))
+	    do (destroy-pixel-iterator iter)))))
+
 
 ;;; Drawing Wand Utilities
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -73,6 +152,29 @@
     (unwind-protect
          (progn ,@body)
       (destroy-drawing-wand ,var))))
+
+(defmacro with-cloned-drawing-wand ((var orig-wand) &body body)
+  `(let ((,var (clone-drawing-wand ,orig-wand)))
+    (unwind-protect
+         (progn ,@body)
+      (destroy-drawing-wand ,var))))
+
+(defmacro with-drawing-wands (vars &body body)
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-drawing-wand (,(car bindings))
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+      (bind vars body)))
+
+(defmacro with-cloned-drawing-wands (var-bindings &body body)
+  "VAR-BINDINGS is a list of (VAR ORIG-VAR)"
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-cloned-drawing-wand ,(car bindings)
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+      (bind var-bindings body)))
 
 
 ;;; Magick Wand Utilities
@@ -137,6 +239,32 @@ libjpeg (as a cons):
 (defmacro give-wand (var)
   `(prog1 ,var (setf ,var nil)))
 
+(defmacro with-cloned-magick-wand ((var orig-wand) &body body)
+  `(let ((,var (clone-magick-wand ,orig-wand)))
+    (unwind-protect
+         (progn ,@body)
+      (destroy-magick-wand ,var))))
+
+(defmacro with-magick-wands (bindings &body body)
+  (let* ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
+                           (list bindings)
+                           bindings)))
+    (labels ((bind (bindings body)
+               (if bindings
+                   `(with-magick-wand (,@(car bindings))
+		      ,(bind (cdr bindings) body))
+                   `(progn ,@body))))
+      (bind binding-list body))))
+
+(defmacro with-cloned-magick-wands (var-bindings &body body)
+  "VAR-BINDINGS is a list of (VAR ORIG-VAR)"
+  (labels ((bind (bindings body)
+	     (if bindings
+		 `(with-cloned-magick-wand ,(car bindings)
+		    ,(bind (cdr bindings) body))
+		 `(progn ,@body))))
+    (bind var-bindings body)))
+
 ;;; Manipulating pixel data
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -194,3 +322,48 @@ libjpeg (as a cons):
           (cffi:mem-ref data :uchar (+ i 1)) g
           (cffi:mem-ref data :uchar (+ i 2)) b
           (cffi:mem-ref data :uchar (+ i 3)) a)))
+
+;; Drawing helpers
+
+(defmacro with-pointer-to-point-info-data ((out polygon-data &key length size-var) &body body)
+  "Bind OUT to a foreign allocated array of PointInfo objects
+when evaluating BODY.  POLYGON-DATA is a list of points of the
+form ((x1 y1) (x2 y) ...).  If LENGTH is supplied it should be an
+integer and only the first LENGTH elements of POLYGON-DATA are used to
+allocate the array.  If SIZE-VAR is supplied it should be a symbol. It
+is bound to the number of PointInfo objects allocated in the array"
+  (let ((len-var (or size-var (gensym "LEN-")))
+	(data-var (gensym "POINT-DATA-")))
+    `(let* ((,data-var ,polygon-data)
+	    (,len-var (or ,length (length ,data-var))))
+       (cffi:with-foreign-object (,out 'magick-point-info ,len-var)
+	 (loop for (x y) in ,data-var
+	       for i from 0 below ,len-var
+	       do (setf (cffi:foreign-slot-value
+			 (cffi:mem-aptr ,out 'magick-point-info i)
+			 'magick-point-info
+			 'x)
+			(coerce x 'double-float)
+			(cffi:foreign-slot-value
+			 (cffi:mem-aptr ,out 'magick-point-info i)
+			 'magick-point-info
+			 'y)
+			(coerce y 'double-float)))
+	 ,@body))))
+
+(export 'with-pointer-to-point-info-data 'lisp-magick-wand)
+
+
+;; helper for the `opacity' pixelwand parameter to
+;; MagickColorizeImage. To work around the API gotcha: the opacity
+;; PixelWand has to set the opacity for red green and blue
+;; channels. using PixelSetAlpha will have no effect.
+
+(defun pixel-wand-set-alpha (pw alpha)
+  (pixel-set-red pw alpha)
+  (pixel-set-green pw alpha)
+  (pixel-set-blue pw alpha)
+  ;;  (pixel-set-alpha pw alpha)
+  )
+
+(export 'pixel-wand-set-alpha 'lisp-magick-wand)

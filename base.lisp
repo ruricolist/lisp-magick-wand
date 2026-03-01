@@ -244,7 +244,8 @@
     (dolist (arg args)
       (destructuring-bind (name type) arg
         (cond
-          ((consp type)
+          ((and (consp type) ;madhu 251225, allow exception (:pointer TYPE)
+		(not (eql :pointer (car type))))
            (setf simple-p nil)
            (apply #'%special-argument-handling name type))
           (t
@@ -321,6 +322,9 @@
     "libWand.so"))
   (t (:default "libWand")))
 (cffi:use-foreign-library lib-magick-wand)
+
+(unless (search "HDRI.so" (namestring (cffi:foreign-library-pathname (cffi::get-foreign-library  'lib-magick-wand))))
+  (pushnew 'no-hdri *features*))
 
 (defun type-name-to-class-name (name)
   (intern (concatenate 'string (symbol-name name) "-TYPE-CLASS")

@@ -8,7 +8,7 @@
   :source-control (:git "https://github.com/ruricolist/lisp-magick-wand.git")
   :serial t
   :in-order-to ((test-op (test-op "lisp-magick-wand/test")))
-  :depends-on ("alexandria" "cffi")
+  :depends-on ("alexandria" "cffi" "float-features")
   :components ((:file "packages")
                (:file "base")
                (:file "quantum")
